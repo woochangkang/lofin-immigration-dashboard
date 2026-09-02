@@ -48,6 +48,7 @@
 }
 :root[data-theme="dark"] .band{ background:#070d11 }
 @media (prefers-color-scheme: dark){ :root:where(:not([data-theme="light"])) .band{ background:#070d11 } }
+html{zoom:1.25}  /* 전체 25% 확대 (사용자 요청 2026-09-03) */
 *{box-sizing:border-box}
 @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
 body{margin:0;background:var(--page);color:var(--ink);
@@ -264,12 +265,14 @@ document.getElementById("defLabel").textContent =
 
 /* ---------- tooltip ---------- */
 const tip = document.getElementById("tip");
+const ZOOM = 1.25;  // html{zoom}과 일치시킬 것
 function showTip(html, ev){
   tip.innerHTML = html; tip.style.display = "block";
+  const cx = ev.clientX / ZOOM, cy = ev.clientY / ZOOM, vw = innerWidth / ZOOM;
   const w = tip.offsetWidth, h = tip.offsetHeight;
-  let x = ev.clientX + 14, y = ev.clientY - h - 10;
-  if (x + w > innerWidth - 8) x = ev.clientX - w - 14;
-  if (y < 8) y = ev.clientY + 14;
+  let x = cx + 14, y = cy - h - 10;
+  if (x + w > vw - 8) x = cx - w - 14;
+  if (y < 8) y = cy + 14;
   tip.style.left = x + "px"; tip.style.top = y + "px";
 }
 function hideTip(){ tip.style.display = "none"; }
