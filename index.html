@@ -203,7 +203,7 @@ footer p{margin:4px 0}
 
 <section>
   <h2>자치단체별 내역</h2>
-  <p class="desc">선택 연도의 단체별 이민·다문화 지출액, 사업 수, 총지출 대비 비중. 열 머리글을 눌러 정렬.</p>
+  <p class="desc">선택 연도의 단체별 이민·다문화 지출액, 사업 수, 총지출 대비 비중. 열 머리글을 눌러 정렬하고, 행을 클릭하면 위 지도 옆에 그 단체의 요약이 열린다.</p>
   <div class="controls">
     <label for="selYear2">연도</label>
     <select id="selYear2"></select>
@@ -216,30 +216,6 @@ footer p{margin:4px 0}
       <th data-k="ep" class="on">지출액(억원) ▾</th><th data-k="n">사업 수</th><th data-k="share">비중(%)</th>
     </tr></thead><tbody></tbody>
   </table></div>
-</section>
-
-<section id="lafDetail">
-  <h2>단체별 상세</h2>
-  <p class="desc">자치단체(본청 포함)를 선택하면 해당 단체의 추이·구성·주요 사업을 보여준다. 위 표에서 행을 눌러도 열린다. 주소창의 <code>#laf=코드</code>로 단체별 페이지 공유 가능.</p>
-  <div class="controls">
-    <label for="selLaf">단체</label>
-    <select id="selLaf"></select>
-  </div>
-  <div class="kpis" id="lafKpis" style="margin-top:0"></div>
-  <div class="grid2" style="margin-top:14px">
-    <div class="card">
-      <div class="legend"><span class="it"><span class="sw" style="background:var(--s1)"></span>지출액(억원)</span></div>
-      <div id="chLafTrend"></div>
-    </div>
-    <div class="card">
-      <div class="legend" id="lgLafCat"></div>
-      <div id="chLafCat"></div>
-    </div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <div class="legend"><span class="it" style="color:var(--muted)">10년 누적 상위 사업 (막대 색 = 대상 집단)</span></div>
-    <div id="chLafTop"></div>
-  </div>
 </section>
 
 <footer>
@@ -514,9 +490,21 @@ function renderMap(){
     return `<path d="${f.d}" fill="${fill}" stroke="var(--surface)" stroke-width="1"
       vector-effect="non-scaling-stroke" data-i="${i}" style="cursor:pointer"/>`;
   }).join("");
+  let labels = "";
+  if(mapView!==null){
+    const fs = Math.max(7, vb[2]*0.024);
+    labels = feats.map(f=>{
+      const nm = f.name.startsWith(mapView) ? f.name.slice(mapView.length) : f.name;
+      if(f.b[2] < fs*nm.length*0.95 || f.b[3] < fs*1.6) return "";  // 폴리곤이 라벨보다 작으면 생략 (툴팁으로 확인)
+      const cx = f.b[0]+f.b[2]/2, cy = f.b[1]+f.b[3]/2;
+      return `<text x="${cx}" y="${cy}" text-anchor="middle" font-size="${fs.toFixed(1)}"
+        fill="var(--ink)" stroke="var(--surface)" stroke-width="${(fs*0.22).toFixed(1)}"
+        paint-order="stroke" style="pointer-events:none">${nm}</text>`;
+    }).join("");
+  }
   const el = document.getElementById("chMap");
   el.innerHTML = `<svg viewBox="${vb.join(" ")}" style="max-height:560px" role="img"
-    aria-label="지역별 ${METRIC_NM[metric]} 지도">${paths}</svg>`;
+    aria-label="지역별 ${METRIC_NM[metric]} 지도">${paths}${labels}</svg>`;
   document.getElementById("mapLegend").innerHTML =
     `${fmtMetric(lo, metric)} ` +
     RAMP7.map(r=>`<span style="width:16px;height:10px;border-radius:2px;background:var(${r})"></span>`).join("") +
@@ -539,7 +527,7 @@ function renderMap(){
     if(t.tagName!=="path") return;
     const f = feats[+t.dataset.i];
     if(mapView===null){ mapView = f.drill; renderMap(); }
-    else if(f.laf){ renderMapDetail(f.laf); renderLaf(f.laf); }
+    else if(f.laf){ renderMapDetail(f.laf); }
   });
   // 순위 패널
   const ranked = feats.filter(f=>metricVal(f.rec, metric)!=null)
@@ -569,6 +557,8 @@ function renderMapDetail(cd){
   const rows = DATA.laf_year.filter(d=>d.laf_cd===cd).sort((a,b)=>a.fy-b.fy);
   if(!rows.length) return;
   const latest = rows[rows.length-1];
+  if(!latest.laf_nm.endsWith("본청") && mapView!==latest.sido){ mapView = latest.sido; renderMap(); }
+  history.replaceState(null, "", "#laf=" + cd);
   const cum = rows.reduce((t,d)=>t+d.ep,0);
   const box = document.getElementById("mapDetail");
   box.hidden = false;
@@ -577,7 +567,6 @@ function renderMapDetail(cd){
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
       <b style="font-size:15px">${latest.laf_nm} <span style="color:var(--muted);font-weight:400;font-size:12.5px">${latest.sido}</span></b>
       <span style="display:flex;gap:10px;align-items:center">
-        <a href="#lafDetail" style="font-size:12px;color:var(--accent-ink)">전체 상세 ↓</a>
         <button id="mdClose" aria-label="닫기" style="font:inherit;border:1px solid var(--axis);background:var(--surface);color:var(--ink2);border-radius:6px;width:24px;height:24px;cursor:pointer;line-height:1">×</button>
       </span>
     </div>
@@ -747,7 +736,7 @@ function drawTable(){
     return sortAsc ? c : -c;
   });
   const vmax = Math.max(...DATA.laf_year.filter(d=>d.fy===year).map(d=>d.ep))/EOK;
-  document.querySelector("#tbl tbody").innerHTML = rows.map(d=>`<tr data-laf="${d.laf_cd}" style="cursor:pointer" title="클릭하면 단체별 상세로 이동">
+  document.querySelector("#tbl tbody").innerHTML = rows.map(d=>`<tr data-laf="${d.laf_cd}" style="cursor:pointer" title="클릭하면 지도 요약 패널이 열립니다">
     <td>${d.laf_nm}</td><td>${d.sido}</td>
     <td><span class="bar-cell"><span class="mini" style="width:${Math.max(2,d.ep/EOK/vmax*90)}px"></span>${F1(d.ep/EOK)}</span></td>
     <td>${d.n}</td><td>${d.share.toFixed(3)}</td></tr>`).join("");
@@ -767,118 +756,16 @@ document.querySelectorAll("#tbl thead th").forEach(th=>{
 });
 document.getElementById("q").addEventListener("input", drawTable);
 
-/* ---------- laf detail (단체별 상세, #laf= 해시 라우팅) ---------- */
-const LAFS = (()=>{
-  const m = new Map();
-  for(const d of DATA.laf_year) m.set(d.laf_cd, {laf_cd:d.laf_cd, laf_nm:d.laf_nm, sido:d.sido});
-  return [...m.values()].sort((a,b)=>a.sido.localeCompare(b.sido,"ko")||a.laf_nm.localeCompare(b.laf_nm,"ko"));
-})();
-(function(){
-  const bySido = {};
-  for(const l of LAFS) (bySido[l.sido] ||= []).push(l);
-  document.getElementById("selLaf").innerHTML = Object.entries(bySido).map(([s,ls]) =>
-    `<optgroup label="${s}">` + ls.map(l=>`<option value="${l.laf_cd}">${l.laf_nm}</option>`).join("") + `</optgroup>`).join("");
-})();
-catLegend("lgLafCat");
-function renderLaf(cd){
-  const rows = DATA.laf_year.filter(d=>d.laf_cd===cd).sort((a,b)=>a.fy-b.fy);
-  if(!rows.length) return;
-  const latest = rows[rows.length-1];
-  const cum = rows.reduce((s,d)=>s+d.ep,0);
-  document.getElementById("selLaf").value = cd;
-  document.getElementById("lafKpis").innerHTML = [
-    {lab:`${latest.fy}년 지출액`, val:`${F1(latest.ep/EOK)}억원`, note:`${latest.sido} ${latest.laf_nm}`},
-    {lab:"총지출 대비 비중", val:`${latest.share.toFixed(3)}%`, note:`${latest.fy}년`},
-    {lab:`${latest.fy}년 사업 수`, val:F(latest.n), note:"세부사업 단위"},
-    {lab:"10년 누적 지출", val:`${F(cum/EOK)}억원`, note:`${rows[0].fy}–${latest.fy}`},
-  ].map(k=>`<div class="kpi"><div class="lab">${k.lab}</div><div class="val">${k.val}</div><div class="note">${k.note}</div></div>`).join("");
-
-  // 추이 (막대)
-  (function(){
-    const W=480,H=260,m={t:16,r:12,b:26,l:52};
-    const iw=W-m.l-m.r, ih=H-m.t-m.b;
-    const vmax = niceMax(Math.max(...rows.map(d=>d.ep))/EOK) || 1;
-    const bw = iw/YEARS.length*0.55;
-    let g="";
-    for(let t=0;t<=4;t++){
-      const yy=m.t+ih-t/4*ih;
-      g+=`<line x1="${m.l}" y1="${yy}" x2="${W-m.r}" y2="${yy}" stroke="var(--grid)"/>
-          <text x="${m.l-6}" y="${yy+4}" text-anchor="end" class="tick">${F(vmax*t/4)}</text>`;
-    }
-    const byFy = new Map(rows.map(d=>[d.fy,d]));
-    let bars="", xt="";
-    YEARS.forEach((yr,i)=>{
-      const cx=m.l+(i+0.5)/YEARS.length*iw;
-      const d=byFy.get(yr);
-      if(d){
-        const hgt=d.ep/EOK/vmax*ih;
-        bars+=`<rect x="${cx-bw/2}" y="${m.t+ih-hgt}" width="${bw}" height="${hgt}" rx="2" fill="var(--s1)" data-y="${yr}"/>`;
-      }
-      if(i%2===0||i===YEARS.length-1) xt+=`<text x="${cx}" y="${H-6}" text-anchor="middle" class="tick">${yr}</text>`;
-    });
-    const el=document.getElementById("chLafTrend");
-    el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="단체 연도별 지출 추이">${g}${bars}
-      <line x1="${m.l}" y1="${m.t+ih}" x2="${W-m.r}" y2="${m.t+ih}" stroke="var(--axis)"/>${xt}</svg>`;
-    el.querySelector("svg").addEventListener("mousemove", ev=>{
-      const t=ev.target;
-      if(t.tagName!=="rect"){ hideTip(); return; }
-      const d=byFy.get(+t.dataset.y);
-      showTip(`<b>${d.fy}년</b>
-        <div class="row"><span>지출액</span><b>${F1(d.ep/EOK)}억원</b></div>
-        <div class="row"><span>비중</span><b>${d.share.toFixed(3)}%</b></div>
-        <div class="row"><span>사업 수</span><span>${d.n}</span></div>`, ev);
-    });
-    el.querySelector("svg").addEventListener("mouseleave", hideTip);
-  })();
-
-  stack100("chLafCat", rows.map(d=>({fy:d.fy, f:d.f, l:d.l, g:d.g})), 260, 480);
-
-  // 상위 사업
-  (function(){
-    const top = (DATA.laf_top[cd]||[]);
-    const catCol = {family:"--s1", labor:"--s2", general:"--s3"};
-    const barH=30, labW=330, valW=66, m2={t:8,r:valW,b:6,l:labW};
-    const W=1000, iw=W-m2.l-m2.r, H=m2.t+top.length*barH+m2.b;
-    const vmax = top.length ? top[0].ep/EOK : 1;
-    let g="";
-    top.forEach((d,i)=>{
-      const w=Math.max(2, d.ep/EOK/vmax*iw), yy=m2.t+i*barH;
-      const nm = d.nm.length>25 ? d.nm.slice(0,24)+"…" : d.nm;
-      g+=`<text x="${m2.l-10}" y="${yy+barH/2+4}" text-anchor="end" class="dlabel" fill="var(--ink)">${nm}</text>
-          <rect x="${m2.l}" y="${yy+6}" width="${w}" height="${barH-12}" rx="2" fill="var(${catCol[d.cat]})" data-i="${i}"/>
-          <text x="${m2.l+w+6}" y="${yy+barH/2+4}" class="dlabel">${F1(d.ep/EOK)}</text>`;
-    });
-    const el=document.getElementById("chLafTop");
-    el.innerHTML = top.length
-      ? `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="단체 누적 상위 사업">${g}</svg>`
-      : `<p class="desc" style="margin:8px 0">표시할 사업이 없습니다.</p>`;
-    const svg=el.querySelector("svg");
-    if(svg){
-      svg.addEventListener("mousemove", ev=>{
-        const t=ev.target;
-        if(t.tagName!=="rect"){ hideTip(); return; }
-        const d=top[+t.dataset.i];
-        const catNm = {family:"다문화가족·결혼이민", labor:"외국인노동", general:"외국인주민 일반"}[d.cat];
-        showTip(`<b>${d.nm}</b>
-          <div class="row"><span>누적 지출</span><b>${F1(d.ep/EOK)}억원</b></div>
-          <div class="row"><span>대상 집단</span><span>${catNm}</span></div>
-          <div class="row"><span>시행 기간</span><span>${d.y0}–${d.y1}</span></div>`, ev);
-      });
-      svg.addEventListener("mouseleave", hideTip);
-    }
-  })();
-  history.replaceState(null, "", "#laf=" + cd);
-}
-document.getElementById("selLaf").addEventListener("change", e=>renderLaf(e.target.value));
+/* ---------- 표 행·해시 → 지도 요약 패널 ---------- */
 document.querySelector("#tbl tbody").addEventListener("click", e=>{
   const tr = e.target.closest("tr[data-laf]");
   if(!tr) return;
-  renderLaf(tr.dataset.laf);
-  document.getElementById("lafDetail").scrollIntoView({behavior:"smooth"});
+  renderMapDetail(tr.dataset.laf);
+  document.getElementById("mapSec").scrollIntoView({behavior:"smooth"});
 });
 window.addEventListener("hashchange", ()=>{
-  const m = location.hash.match(/laf=([0-9]+)/);
-  if(m) renderLaf(m[1]);
+  const h = location.hash.match(/laf=([0-9]+)/);
+  if(h) renderMapDetail(h[1]);
 });
 
 /* ---------- year selectors ---------- */
@@ -890,7 +777,7 @@ document.getElementById("selYear").addEventListener("change", e=>drawSido(+e.tar
 document.getElementById("selYear2").addEventListener("change", drawTable);
 drawSido(LAST.fy);
 drawTable();
-renderLaf((location.hash.match(/laf=([0-9]+)/)||[])[1] || "1100000");
+{ const h = location.hash.match(/laf=([0-9]+)/); if(h) renderMapDetail(h[1]); }
 </script>
 
 </body>
