@@ -122,7 +122,7 @@ footer p{margin:4px 0}
 
 <section id="mapSec">
   <h2>지도로 보는 변이</h2>
-  <p class="desc">전국(시도) 지도에서 시도를 클릭하면 그 안의 시군구로 내려간다. 지표를 바꿔 <b>총량</b>(지출액·비중)과 <b>초점</b>(대상 집단별 구성)의 지역 간 변이를 비교할 수 있다. 광역 본청 지출은 특정 시군구에 귀속할 수 없어 시군구 지도에서는 별도 표시.</p>
+  <p class="desc">전국(시도) 지도에서 시도를 클릭하면 그 안의 시군구로 내려가고, <b>시군구를 클릭하면 오른쪽에 그 단체의 요약이 바로 뜬다</b>. 지표를 바꿔 <b>총량</b>(지출액·비중)과 <b>초점</b>(대상 집단별 구성)의 지역 간 변이를 비교할 수 있다. 광역 본청 지출은 특정 시군구에 귀속할 수 없어 시군구 지도에서는 별도 표시.</p>
   <div class="controls">
     <label for="selMapYear">연도</label><select id="selMapYear"></select>
     <label for="selMetric">지표</label>
@@ -141,9 +141,12 @@ footer p{margin:4px 0}
       <div id="mapLegend" style="display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-top:8px;font-size:11.5px;color:var(--muted)"></div>
     </div>
     <div class="card">
-      <div class="legend"><span class="it" id="mapRankTitle" style="color:var(--muted)"></span></div>
-      <div id="mapRank"></div>
-      <div id="mapHq" style="margin-top:10px;font-size:12.5px;color:var(--ink2)"></div>
+      <div id="mapRankWrap">
+        <div class="legend"><span class="it" id="mapRankTitle" style="color:var(--muted)"></span></div>
+        <div id="mapRank"></div>
+        <div id="mapHq" style="margin-top:10px;font-size:12.5px;color:var(--ink2)"></div>
+      </div>
+      <div id="mapDetail" hidden></div>
     </div>
   </div>
 </section>
@@ -503,7 +506,7 @@ function renderMap(){
     if(t.tagName!=="path") return;
     const f = feats[+t.dataset.i];
     if(mapView===null){ mapView = f.drill; renderMap(); }
-    else if(f.laf){ renderLaf(f.laf); document.getElementById("lafDetail").scrollIntoView({behavior:"smooth"}); }
+    else if(f.laf){ renderMapDetail(f.laf); renderLaf(f.laf); }
   });
   // 순위 패널
   const ranked = feats.filter(f=>metricVal(f.rec, metric)!=null)
@@ -525,11 +528,71 @@ function renderMap(){
     ? `<b>${mapView}본청</b> (지도 미표시): 지출 ${F(hq.ep/EOK)}억원 · 비중 ${hq.share.toFixed(3)}% · 가족/노동/일반 ${hqCore?`${Math.round(hq.f/hqCore*100)}/${Math.round(hq.l/hqCore*100)}/${Math.round(hq.g/hqCore*100)}%`:"–"}`
     : (mapView!==null ? `${mapView}본청: 해당 연도 자료 없음` : "");
 }
+function closeMapDetail(){
+  document.getElementById("mapDetail").hidden = true;
+  document.getElementById("mapRankWrap").hidden = false;
+}
+function renderMapDetail(cd){
+  const rows = DATA.laf_year.filter(d=>d.laf_cd===cd).sort((a,b)=>a.fy-b.fy);
+  if(!rows.length) return;
+  const latest = rows[rows.length-1];
+  const cum = rows.reduce((t,d)=>t+d.ep,0);
+  const box = document.getElementById("mapDetail");
+  box.hidden = false;
+  document.getElementById("mapRankWrap").hidden = true;
+  box.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <b style="font-size:15px">${latest.laf_nm} <span style="color:var(--muted);font-weight:400;font-size:12.5px">${latest.sido}</span></b>
+      <span style="display:flex;gap:10px;align-items:center">
+        <a href="#lafDetail" style="font-size:12px;color:var(--s1)">전체 상세 ↓</a>
+        <button id="mdClose" aria-label="닫기" style="font:inherit;border:1px solid var(--axis);background:var(--surface);color:var(--ink2);border-radius:6px;width:24px;height:24px;cursor:pointer;line-height:1">×</button>
+      </span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin:10px 0 4px;font-size:12.5px;color:var(--ink2)">
+      <span>${latest.fy}년 지출 <b style="color:var(--ink)">${F1(latest.ep/EOK)}억원</b></span>
+      <span>비중 <b style="color:var(--ink)">${latest.share.toFixed(3)}%</b></span>
+      <span>사업 수 <b style="color:var(--ink)">${latest.n}</b></span>
+      <span>10년 누적 <b style="color:var(--ink)">${F(cum/EOK)}억원</b></span>
+    </div>
+    <div id="mdTrend" style="margin-top:6px"></div>
+    <div id="mdCat" style="margin-top:2px"></div>
+    <div id="mdTop" style="margin-top:8px"></div>`;
+  document.getElementById("mdClose").addEventListener("click", closeMapDetail);
+  // 미니 추이
+  (function(){
+    const W=440,H=130,m={t:8,r:8,b:20,l:44};
+    const iw=W-m.l-m.r, ih=H-m.t-m.b;
+    const vmax = niceMax(Math.max(...rows.map(d=>d.ep))/EOK) || 1;
+    const byFy = new Map(rows.map(d=>[d.fy,d]));
+    const bw = iw/YEARS.length*0.55;
+    let g=`<text x="${m.l}" y="${m.t+2}" class="tick">지출액(억원)</text>`;
+    YEARS.forEach((yr,i)=>{
+      const cx=m.l+(i+0.5)/YEARS.length*iw;
+      const d=byFy.get(yr);
+      if(d){
+        const hgt=d.ep/EOK/vmax*ih;
+        g+=`<rect x="${cx-bw/2}" y="${m.t+ih-hgt}" width="${bw}" height="${hgt}" rx="2" fill="var(--s1)"><title>${yr}년 ${F1(d.ep/EOK)}억원</title></rect>`;
+      }
+      if(i%3===0||i===YEARS.length-1) g+=`<text x="${cx}" y="${H-5}" text-anchor="middle" class="tick">${yr}</text>`;
+    });
+    g+=`<line x1="${m.l}" y1="${m.t+ih}" x2="${W-m.r}" y2="${m.t+ih}" stroke="var(--axis)"/>`;
+    document.getElementById("mdTrend").innerHTML = `<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;
+  })();
+  stack100("mdCat", rows.map(d=>({fy:d.fy, f:d.f, l:d.l, g:d.g})), 150, 440);
+  const top = (DATA.laf_top[cd]||[]).slice(0,5);
+  const catCol = {family:"--s1", labor:"--s2", general:"--s3"};
+  document.getElementById("mdTop").innerHTML =
+    `<div style="font-size:11.5px;color:var(--muted);margin-bottom:4px">누적 상위 사업</div>` +
+    top.map(d=>`<div style="display:flex;align-items:center;gap:7px;margin:3px 0;font-size:12.5px">
+      <span class="sw" style="background:var(${catCol[d.cat]})"></span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${d.nm}">${d.nm}</span>
+      <span style="font-variant-numeric:tabular-nums;color:var(--ink2)">${F1(d.ep/EOK)}억</span></div>`).join("");
+}
 document.getElementById("selMapYear").innerHTML =
   YEARS.map(y=>`<option value="${y}" ${y===LAST.fy?"selected":""}>${y}</option>`).join("");
 document.getElementById("selMapYear").addEventListener("change", renderMap);
 document.getElementById("selMetric").addEventListener("change", renderMap);
-document.getElementById("mapBack").addEventListener("click", ()=>{ mapView=null; renderMap(); });
+document.getElementById("mapBack").addEventListener("click", ()=>{ mapView=null; closeMapDetail(); renderMap(); });
 renderMap();
 
 /* ---------- heatmap (sido × year, share) ---------- */
