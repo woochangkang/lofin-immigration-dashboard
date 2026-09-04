@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>원자료 한 행 읽기 — 27개 필드 · 지방재정 세부사업 데이터</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* ══ tokens (alio-dashboard 아이덴티티) ══ */
+:root{
+  color-scheme:light;
+  --page:#e9edf0; --surface:#fafbfc; --surface2:#f1f4f7;
+  --ink:#0f1a21; --ink2:#4a5b66; --muted:#77899a;
+  --grid:#e3e9ed; --axis:#ccd6dd; --ring:#ccd6dd;
+  --accent:#0f4c5c; --accent-soft:#dceaee; --accent-ink:#0f4c5c;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+  --seq100:#cde2fb; --seq200:#9ec5f4; --seq300:#6da7ec; --seq400:#3987e5;
+  --seq500:#256abf; --seq600:#184f95; --seq700:#0d366b;
+  --shadow:0 1px 0 rgba(15,26,33,.04), 0 1px 3px rgba(15,26,33,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme:dark;
+    --page:#0e1519; --surface:#18212a; --surface2:#1e2831;
+    --ink:#e7eef3; --ink2:#9cadb9; --muted:#6c7e8b;
+    --grid:#222d35; --axis:#2a363f; --ring:#2a363f;
+    --accent:#6cbcd0; --accent-soft:#14313b; --accent-ink:#8fd0e0;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 1px 3px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0e1519; --surface:#18212a; --surface2:#1e2831;
+  --ink:#e7eef3; --ink2:#9cadb9; --muted:#6c7e8b;
+  --grid:#222d35; --axis:#2a363f; --ring:#2a363f;
+  --accent:#6cbcd0; --accent-soft:#14313b; --accent-ink:#8fd0e0;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 1px 3px rgba(0,0,0,.35);
+}
+/* 반전 밴드 — 두 테마 모두 어두운 판 (alio 장치) */
+.band{
+  background:#101a22; color:#e9f0f4;
+  --surface:#182530; --surface2:#1f2e3a;
+  --ink:#e9f0f4; --ink2:#a3b6c2; --muted:#7c8fa0;
+  --ring:#2c3d4a; --grid:#233340; --axis:#2c3d4a;
+  --accent-ink:#9ad6e6; --accent-soft:#1b3742;
+}
+:root[data-theme="dark"] .band{ background:#070d11 }
+@media (prefers-color-scheme: dark){ :root:where(:not([data-theme="light"])) .band{ background:#070d11 } }
+html{zoom:1.25}  /* 전체 25% 확대 (사용자 요청 2026-09-03) */
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+body{margin:0;background:var(--page);color:var(--ink);
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-size:14.5px;line-height:1.62;-webkit-font-smoothing:antialiased;
+  word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,p,li,td,th,.desc{word-break:keep-all;overflow-wrap:break-word}
+h1,h2{font-family:"Gowun Batang","Apple SD Gothic Neo",serif;text-wrap:balance;font-weight:700}
+a{color:var(--accent-ink)}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+.band .wrap{padding:34px 20px 30px}
+header h1{font-size:25px;margin:0 0 6px}
+header .sub{color:var(--ink2);max-width:72ch;margin:0}
+.deflabel{display:inline-block;margin-top:12px;padding:3px 10px;border:1px solid var(--ring);
+  border-radius:99px;font-size:12px;color:var(--ink2);background:var(--surface)}
+section{margin-top:38px}
+h2{font-size:17.5px;margin:0 0 3px}
+h3{font-size:14.5px;margin:22px 0 4px;color:var(--ink)}
+.desc{color:var(--ink2);font-size:13px;margin:0 0 12px;max-width:80ch}
+.card{background:var(--surface);border:1px solid var(--ring);border-radius:10px;padding:16px;box-shadow:var(--shadow)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px}
+.kpi{background:var(--surface);border:1px solid var(--ring);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:12px;color:var(--ink2);letter-spacing:.02em}
+.kpi .val{font-size:24px;font-weight:600;margin-top:2px;
+  font-family:"IBM Plex Mono","IBM Plex Sans KR",monospace;font-variant-numeric:tabular-nums}
+.kpi .note{font-size:12px;color:var(--muted);margin-top:2px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:6px 0 4px}
+.legend .it{display:flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:3px;flex:none}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+select,input[type=search]{font:inherit;font-size:13px;color:var(--ink);background:var(--surface);
+  border:1px solid var(--axis);border-radius:7px;padding:5px 9px}
+select:focus-visible,input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:inherit}
+.tick{font-size:11px;fill:var(--muted)}
+.dlabel{font-size:11.5px;fill:var(--ink2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+.tooltip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--ring);
+  border-radius:8px;padding:8px 11px;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.16);
+  z-index:10;display:none;max-width:280px}
+.tooltip b{font-weight:700}
+.tooltip .row{display:flex;justify-content:space-between;gap:14px;color:var(--ink2)}
+.tbl-wrap{overflow:auto;max-height:480px;border:1px solid var(--ring);border-radius:10px;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13px;background:var(--surface)}
+th,td{padding:7px 12px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td:nth-child(n+3){font-family:"IBM Plex Mono","IBM Plex Sans KR",monospace}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+thead th{position:sticky;top:0;background:var(--surface);color:var(--ink2);font-weight:500;
+  border-bottom:1px solid var(--axis);cursor:pointer;user-select:none}
+thead th.on{color:var(--ink);font-weight:700}
+tbody tr{border-bottom:1px solid var(--grid)}
+tbody tr:hover{background:var(--accent-soft)}
+.bar-cell{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.mini{height:8px;border-radius:2px;background:var(--s1);flex:none}
+footer{margin-top:44px;color:var(--muted);font-size:12px;border-top:1px solid var(--axis);padding-top:14px;max-width:88ch}
+footer p{margin:4px 0}
+
+
+/* ── 사이트 공통 (다중 페이지) ── */
+.nav{display:flex;gap:4px 18px;flex-wrap:wrap;align-items:baseline;margin-top:14px;font-size:13.5px}
+.nav a{color:var(--ink2);text-decoration:none;padding:3px 0;border-bottom:2px solid transparent}
+.nav a:hover{color:var(--ink)}
+.nav a.on{color:var(--ink);font-weight:700;border-bottom-color:var(--accent-ink)}
+.nav .grp{color:var(--muted);font-size:12px;margin-left:6px}
+.sitename{font-size:12.5px;letter-spacing:.04em;color:var(--ink2);margin:0 0 2px}
+.sitename a{color:inherit;text-decoration:none}
+.prose{max-width:76ch}
+.prose p{margin:0 0 12px}
+.prose ul{padding-left:20px}
+.lede{font-size:15.5px;color:var(--ink2)}
+.muted{color:var(--muted);font-size:13px}
+.cite{font-size:13px;color:var(--ink2);border-left:3px solid var(--accent);padding-left:10px}
+code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:var(--surface2);padding:1px 5px;border-radius:4px}
+.kw{display:inline-block;font-size:13px;color:var(--ink2);background:var(--surface2);border-radius:6px;padding:2px 8px;margin-top:4px}
+.steps{padding-left:22px}
+.steps li{margin-bottom:9px}
+.log{list-style:none;padding:0}
+.log li{padding:6px 0;border-bottom:1px solid var(--grid);font-size:14px}
+.log .d{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--muted);margin-right:10px}
+table.plain{border-collapse:collapse;width:100%;font-size:13.5px;margin:6px 0 10px}
+table.plain th,table.plain td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--grid);vertical-align:top;white-space:normal;font-family:inherit}
+table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid var(--axis)}
+.tbl-wrap.static{max-height:none}
+.cards .card.link{display:block;text-decoration:none;color:inherit}
+.cards .card.link:hover{border-color:var(--accent)}
+.cards .ttl{font-family:"Gowun Batang",serif;font-weight:700;font-size:16px;margin-bottom:4px;color:var(--accent-ink)}
+.cards p{margin:0;font-size:13.5px;color:var(--ink2)}
+.btn{display:inline-block;padding:7px 14px;border:1px solid var(--accent);border-radius:8px;color:var(--accent-ink);text-decoration:none;font-size:13.5px}
+.btn:hover{background:var(--accent-soft)}
+
+</style>
+</head>
+<body>
+<header class="band">
+<div class="wrap">
+  <p class="sitename"><a href="../../">지방재정 세부사업 데이터</a></p>
+  <h1>원자료 한 행 읽기 — 27개 필드</h1>
+  <nav class="nav"><a href="../../">자료 소개</a><a href="../../data/">수집 과정</a><a href="../../data/fields/" class=on>필드 사전</a><a href="../../data/departments/">부서·위계</a><a class="grp" href="../../immigration/" title="주제: 이민·다문화 재정">이민·다문화 재정 ›</a><a href="../../immigration/">전체 요약</a><a href="../../immigration/regions/">시군구별</a><a href="../../immigration/methods/">방법·검증</a></nav>
+</div>
+</header>
+<div class="wrap" style="padding-top:6px">
+<section class="prose">
+  <p class="lede">이 사이트의 모든 수치는 지방재정365 오픈API의 <b>세부사업별 세출현황</b>(<code>QWGJK</code>) 한 종에서
+  나옵니다. 한 행이 <b>27개 필드</b>로 되어 있는데, 우리가 실제로 쓰는 것은 절반이 되지 않습니다.
+  이 페이지는 27개가 각각 무엇이고, 어디에 함정이 있는지 실제 값으로 설명합니다.</p>
+  <p class="muted" id="fldMeta"></p>
+</section>
+
+<section>
+  <h2>한 행은 이렇게 생겼습니다</h2>
+  <p class="desc">서울본청 2025년 실제 레코드 하나. 국비와 시도비가 함께 잡히는 큰 사업을 골랐습니다.</p>
+  <div class="tbl-wrap static"><table id="fldExample" class="plain">
+    <thead><tr><th style="width:16%">필드</th><th style="width:26%">값</th><th>무엇인가</th></tr></thead><tbody></tbody>
+  </table></div>
+  <p class="desc">27개 중 <b>25개가 API가 주는 값</b>이고, <code>fy</code>와 <code>source_file</code> 두 개는
+  적재할 때 우리가 붙였습니다. <code>fy</code>는 <code>fyr</code>를 정수로 바꾼 사본이고(4,296,988행 전부 일치),
+  <code>source_file</code>은 그 행이 어느 원본 JSON에서 왔는지 적어 둔 것입니다.</p>
+</section>
+
+<section class="prose">
+  <h2>다섯 묶음으로 보면</h2>
+  <h3>① 단체 — 누가 썼는가 (7개)</h3>
+  <p><code>wa_laf_cd</code>·<code>wa_laf_hg_nm</code>은 광역시도, <code>laf_cd</code>·<code>laf_hg_nm</code>은
+  집행 단체입니다. <code>padm_laf_cd</code>는 행정 기관코드로 <code>laf_cd</code>와 다른 체계입니다
+  (<a href="../../data/departments/">기관코드 절</a> 참조). <code>zon_cd</code>는 시도 구분이고 <code>lup_ord</code>는 화면 정렬 순서인데,
+  둘 다 단체가 정해지면 따라 정해지는 값이라 분석에 새로 보태는 정보가 없습니다.</p>
+
+  <h3>② 조직과 사업 — 무엇에 썼는가 (3개)</h3>
+  <p><code>dept_cd</code>는 집행 부서코드입니다. <b>이름이 없습니다.</b> 다른 모든 코드에는 이름 짝이 있는데
+  이것만 없어서, 이 사이트의 <a href="../../data/departments/">부서·위계</a> 작업이 필요했습니다.
+  <code>dbiz_cd</code>는 16자리 세부사업코드이고 <code>dbiz_nm</code>이 그 이름입니다.
+  사업코드는 <b>기관코드(7) + 개설연도(4) + 일련번호(5)</b>로 짜여 있어, 예시의
+  <code>6110000<b>2008</b>32937</code>은 2008년에 개설된 서울시 사업이라는 뜻입니다.</p>
+
+  <h3>③ 분류 — 어떤 갈래인가 (6개)</h3>
+  <p><code>acnt_dv_cd</code>·<code>acnt_dv_nm</code>은 회계구분, <code>fld_cd</code>·<code>fld_nm</code>은 분야,
+  <code>ane_part_cd</code>·<code>part_nm</code>은 부문입니다. 분야 아래 부문이 놓이는 2단 분류입니다.
+  이 여섯 개에 함정이 몰려 있습니다(아래).</p>
+
+  <h3>④ 금액 — 얼마인가 (7개)</h3>
+  <p>단위는 <b>원</b>입니다. <code>bdg_cash_amt</code>가 예산액이고 그 재원 내역이
+  <code>bdg_ntep</code>(국비)·<code>capep</code>(시도비)·<code>sggep</code>(시군구비)·<code>etc_amt</code>(기타)입니다.
+  <code>ep_amt</code>가 실제 지출액이며 <b>이 사이트의 모든 집계는 이 값을 씁니다.</b>
+  <code>cpl_amt</code>는 아래 "아직 모르는 것"에서 따로 다룹니다.</p>
+
+  <h3>⑤ 시점과 출처 (4개)</h3>
+  <p><code>fyr</code>/<code>fy</code>는 회계연도, <code>exe_ymd</code>는 집행 기준일입니다. 값이
+  <code>YYYY1231</code> 열 종류뿐인데, 이건 데이터의 성질이 아니라 <b>우리가 그렇게만 수집했기 때문</b>입니다 —
+  연말 확정 스냅샷을 쓰려고 <code>exe_ymd=YYYY1231</code>로만 호출했습니다. 연중 시점을 보려면 다시 받아야 합니다.</p>
+</section>
+
+<section>
+  <h2>데이터가 지키는 규칙</h2>
+  <p class="desc">전수 검사로 확인한 관계입니다. 데이터가 깨졌는지 점검할 때 이 규칙을 쓰면 됩니다.</p>
+  <div class="tbl-wrap static"><table id="fldRules" class="plain">
+    <thead><tr><th>규칙</th><th>성립 비율</th><th>뜻</th></tr></thead><tbody></tbody>
+  </table></div>
+  <h3>재원 이름이 맞는지 확인한 방법</h3>
+  <p class="desc">광역단체는 시군구비를 받지 않고, 기초단체는 시도비를 받습니다. 실제로 그런지 보면 레이블이 맞는지 알 수 있습니다.</p>
+  <div class="tbl-wrap static"><table id="fldLevels" class="plain">
+    <thead><tr><th>단체 층위</th><th>행 수</th><th>국비가 있는 행</th><th>시도비가 있는 행</th><th>시군구비가 있는 행</th></tr></thead><tbody></tbody>
+  </table></div>
+  <p>광역 본청에서 시군구비가 잡히는 행이 <b>0.0%</b>입니다. 재원 레이블이 맞습니다.</p>
+</section>
+
+<section class="prose">
+  <h2>함정 다섯</h2>
+  <ol class="steps">
+    <li><b>회계구분은 코드가 갈래이고 이름이 실물입니다.</b> 코드는 <span id="trapAcntCd"></span>종인데 이름은
+      <span id="trapAcntNm"></span>종입니다. 한 코드 아래 단체마다 다른 기금·특별회계 이름이 달립니다.
+      <b>이름으로 묶으면 전국 집계가 산산조각 납니다.</b>
+      <div class="tbl-wrap static"><table id="trapAcnt" class="plain">
+        <thead><tr><th>회계구분코드</th><th>이름 종수</th><th>이름 예시</th></tr></thead><tbody></tbody></table></div></li>
+
+    <li><b>부문코드에 자릿수가 섞여 있습니다.</b> 같은 부문이 <code>085</code>로도 <code>85</code>로도 들어옵니다.
+      코드로 조인하면 같은 부문이 둘로 갈라집니다. 문자가 섞인 코드도 있습니다(예시 행의 <code>08C</code>=노인).
+      <b>부문은 코드가 아니라 이름으로 묶거나, 세 자리로 채운 뒤 묶어야 합니다.</b>
+      <div class="tbl-wrap static"><table id="trapPart" class="plain">
+        <thead><tr><th>부문 이름</th><th>같은 부문에 쓰인 코드</th></tr></thead><tbody></tbody></table></div></li>
+
+    <li><b>분야 이름은 바뀌고 코드는 그대로입니다.</b> 부서코드에서 본 것과 같은 성질입니다.
+      <b>시계열에서는 이름이 아니라 코드로 이어야 합니다.</b>
+      <div class="tbl-wrap static"><table id="trapFld" class="plain">
+        <thead><tr><th>분야코드</th><th>연도에 따라 쓰인 이름</th></tr></thead><tbody></tbody></table></div></li>
+
+    <li><b>단체 이름도 바뀝니다.</b> <span id="trapLaf"></span> 코드는 그대로입니다.</li>
+
+    <li><b>부서코드에만 이름이 없습니다.</b> 다른 코드는 전부 <code>_cd</code>와 <code>_nm</code>이 짝을 이루는데
+      <code>dept_cd</code>만 짝이 없습니다. 지방재정365 오픈API <b>146종을 전수 호출해도 부서명 필드는 없습니다</b>
+      (<a href="../../data/departments/">부서·위계</a> 참조).</li>
+  </ol>
+</section>
+
+<section class="prose">
+  <h2>아직 확실하지 않은 것</h2>
+  <p><code>cpl_amt</code>의 뜻을 확정하지 못했습니다. 예산액과 같은 행이 <span id="cplEq"></span>,
+  더 작은 행이 <span id="cplLt"></span>입니다. 편성액으로 보이지만 공식 항목 설명을 확인하지 못했습니다 —
+  공공데이터포털과 지방재정365 양쪽의 명세 화면에 출력 항목 목록이 노출되지 않습니다.
+  <b>이 사이트의 집계는 <code>cpl_amt</code>를 쓰지 않습니다.</b> 지출은 전부 <code>ep_amt</code> 기준입니다.</p>
+  <div class="card">
+    <b>원자료를 직접 보려면</b>
+    <p class="desc" style="margin:6px 0 0">이 페이지의 값은 모두 로컬 원본에서 나옵니다. 수집 원본은
+    연도·단체별 JSON(<code>raw/settle_dtl/fy=YYYY/laf=XXXXXXX/page_NNNN.json</code>)으로 그대로 보관되어 있고,
+    무엇을 언제 받았는지는 <code>raw/manifest.csv</code>에 기록됩니다. 적재본은
+    <code>warehouse/lofin.duckdb</code>의 <code>settle_dtl</code> 한 테이블입니다.</p>
+  </div>
+</section>
+
+<footer>
+  <p><b>출처</b> 행정안전부 지방재정365 「세부사업별 세출현황」 오픈API (lofin365.go.kr, 출처표시·자유이용). 2016–2025 회계연도, 12월 31일 집행 스냅샷, 243개 자치단체 전수. 수집·검증 2026-09-02.</p>
+  <p>본 사이트의 집계와 분류는 연구자의 가공물입니다 · <a href="../../data/">수집 과정</a> · <a href="../../immigration/methods/">분류 방법</a></p>
+</footer>
+</div>
+<div class="tooltip" id="tip"></div>
+<script>
+const FP = {
+ "total_rows": 4296988,
+ "fy": 2025,
+ "n_fields": 27,
+ "fields": [
+  {
+   "name": "fy",
+   "type": "INTEGER",
+   "distinct": 10,
+   "null_pct": 0.0,
+   "examples": [
+    "2016",
+    "2024",
+    "2018"
+   ]
+  },
+  {
+   "name": "fyr",
+   "type": "VARCHAR",
+   "distinct": 10,
+   "null_pct": 0.0,
+   "examples": [
+    "2025",
+    "2019",
+    "2021"
+   ]
+  },
+  {
+   "name": "wa_laf_cd",
+   "type": "VARCHAR",
+   "distinct": 17,
+   "null_pct": 0.0,
+   "examples": [
+    "4800000",
+    "4300000",
+    "2800000"
+   ]
+  },
+  {
+   "name": "wa_laf_hg_nm",
+   "type": "VARCHAR",
+   "distinct": 17,
+   "null_pct": 0.0,
+   "examples": [
+    "울산",
+    "세종",
+    "경기"
+   ]
+  },
+  {
+   "name": "laf_cd",
+   "type": "VARCHAR",
+   "distinct": 244,
+   "null_pct": 0.0,
+   "examples": [
+    "4175000",
+    "4275000",
+    "4411000"
+   ]
+  },
+  {
+   "name": "laf_hg_nm",
+   "type": "VARCHAR",
+   "distinct": 245,
+   "null_pct": 0.0,
+   "examples": [
+    "경기파주시",
+    "강원동해시",
+    "충북증평군"
+   ]
+  },
+  {
+   "name": "acnt_dv_cd",
+   "type": "VARCHAR",
+   "distinct": 146,
+   "null_pct": 0.0,
+   "examples": [
+    "205",
+    "211",
+    "222"
+   ]
+  },
+  {
+   "name": "acnt_dv_nm",
+   "type": "VARCHAR",
+   "distinct": 1893,
+   "null_pct": 0.0,
+   "examples": [
+    "수질개선특별회계",
+    "식품진흥기금",
+    "기반시설부담금특별회계"
+   ]
+  },
+  {
+   "name": "dept_cd",
+   "type": "VARCHAR",
+   "distinct": 3965,
+   "null_pct": 0.0,
+   "examples": [
+    "1360010",
+    "1081010",
+    "1037030"
+   ]
+  },
+  {
+   "name": "dbiz_cd",
+   "type": "VARCHAR",
+   "distinct": 1011358,
+   "null_pct": 0.0,
+   "examples": [
+    "5390000200830130",
+    "5390000200930066",
+    "5390000201030082"
+   ]
+  },
+  {
+   "name": "dbiz_nm",
+   "type": "VARCHAR",
+   "distinct": 836682,
+   "null_pct": 0.0,
+   "examples": [
+    "차량유지관리",
+    "비정규직근로자 지원센터 운영",
+    "청사관리"
+   ]
+  },
+  {
+   "name": "exe_ymd",
+   "type": "VARCHAR",
+   "distinct": 10,
+   "null_pct": 0.0,
+   "examples": [
+    "20161231",
+    "20201231",
+    "20241231"
+   ]
+  },
+  {
+   "name": "bdg_cash_amt",
+   "type": "BIGINT",
+   "distinct": 921659,
+   "null_pct": 0.0,
+   "examples": [
+    "15145800850",
+    "9055794000",
+    "29243000"
+   ]
+  },
+  {
+   "name": "bdg_ntep",
+   "type": "BIGINT",
+   "distinct": 320983,
+   "null_pct": 0.0,
+   "examples": [
+    "2300000",
+    "2100000000",
+    "908000"
+   ]
+  },
+  {
+   "name": "capep",
+   "type": "BIGINT",
+   "distinct": 399392,
+   "null_pct": 0.0,
+   "examples": [
+    "8791000",
+    "47030000",
+    "8995000"
+   ]
+  },
+  {
+   "name": "sggep",
+   "type": "BIGINT",
+   "distinct": 709134,
+   "null_pct": 0.0,
+   "examples": [
+    "940641000",
+    "103500000",
+    "4500000"
+   ]
+  },
+  {
+   "name": "etc_amt",
+   "type": "BIGINT",
+   "distinct": 16695,
+   "null_pct": 0.0,
+   "examples": [
+    "150000000",
+    "936441200",
+    "54525280"
+   ]
+  },
+  {
+   "name": "ep_amt",
+   "type": "BIGINT",
+   "distinct": 2393790,
+   "null_pct": 0.0,
+   "examples": [
+    "91056000",
+    "4277340000",
+    "20550300"
+   ]
+  },
+  {
+   "name": "cpl_amt",
+   "type": "BIGINT",
+   "distinct": 739457,
+   "null_pct": 0.0,
+   "examples": [
+    "18970000000",
+    "377412000",
+    "1434750000"
+   ]
+  },
+  {
+   "name": "fld_cd",
+   "type": "VARCHAR",
+   "distinct": 14,
+   "null_pct": 0.0,
+   "examples": [
+    "120",
+    "070",
+    "060"
+   ]
+  },
+  {
+   "name": "fld_nm",
+   "type": "VARCHAR",
+   "distinct": 17,
+   "null_pct": 0.0,
+   "examples": [
+    "과학기술",
+    "사회복지",
+    "환경"
+   ]
+  },
+  {
+   "name": "ane_part_cd",
+   "type": "VARCHAR",
+   "distinct": 67,
+   "null_pct": 0.0,
+   "examples": [
+    "102",
+    "08D",
+    "115"
+   ]
+  },
+  {
+   "name": "part_nm",
+   "type": "VARCHAR",
+   "distinct": 57,
+   "null_pct": 0.0,
+   "examples": [
+    "대기",
+    "일반행정",
+    "보육ㆍ가족및여성"
+   ]
+  },
+  {
+   "name": "padm_laf_cd",
+   "type": "VARCHAR",
+   "distinct": 279,
+   "null_pct": 0.0,
+   "examples": [
+    "4000000",
+    "4030000",
+    "4060000"
+   ]
+  },
+  {
+   "name": "lup_ord",
+   "type": "BIGINT",
+   "distinct": 244,
+   "null_pct": 0.0,
+   "examples": [
+    "62501",
+    "62604",
+    "71605"
+   ]
+  },
+  {
+   "name": "zon_cd",
+   "type": "VARCHAR",
+   "distinct": 17,
+   "null_pct": 0.0,
+   "examples": [
+    "27",
+    "11",
+    "29"
+   ]
+  },
+  {
+   "name": "source_file",
+   "type": "VARCHAR",
+   "distinct": 5553,
+   "null_pct": 0.0,
+   "examples": [
+    "raw/settle_dtl/fy=2016/laf=4675000/page_0001.json",
+    "raw/settle_dtl/fy=2016/laf=4686000/page_0002.json",
+    "raw/settle_dtl/fy=2016/laf=4713000/page_0002.json"
+   ]
+  }
+ ],
+ "example": {
+  "fy": "2025",
+  "fyr": "2025",
+  "wa_laf_cd": "1100000",
+  "wa_laf_hg_nm": "서울",
+  "laf_cd": "1100000",
+  "laf_hg_nm": "서울본청",
+  "acnt_dv_cd": "100",
+  "acnt_dv_nm": "일반회계",
+  "dept_cd": "1037020",
+  "dbiz_cd": "6110000200832937",
+  "dbiz_nm": "기초연금 지급",
+  "exe_ymd": "20251231",
+  "bdg_cash_amt": "3448413342000",
+  "bdg_ntep": "3109628267000",
+  "capep": "338785075000",
+  "sggep": "0",
+  "etc_amt": "0",
+  "ep_amt": "3426573219000",
+  "cpl_amt": "3448413342000",
+  "fld_cd": "080",
+  "fld_nm": "사회복지",
+  "ane_part_cd": "08C",
+  "part_nm": "노인",
+  "padm_laf_cd": "6110000",
+  "lup_ord": "11100",
+  "zon_cd": "11",
+  "source_file": "raw/settle_dtl/fy=2025/laf=1100000/page_0001.json"
+ },
+ "identities": {
+  "n": 479683,
+  "src_eq_bdg": 479683,
+  "ep_le_bdg": 479591,
+  "zon_eq": 479683,
+  "cpl_eq": 429341,
+  "cpl_lt": 46924
+ },
+ "levels": [
+  {
+   "lvl": "광역 본청",
+   "n": 65199,
+   "ntep": 28.2,
+   "capep": 92.2,
+   "sggep": 0.0
+  },
+  {
+   "lvl": "기초",
+   "n": 414484,
+   "ntep": 23.1,
+   "capep": 38.9,
+   "sggep": 91.5
+  }
+ ],
+ "traps": {
+  "acnt": [
+   {
+    "cd": "212",
+    "n": 99,
+    "a": "강릉시장기미집행도시계획시설대지등보상특별회계",
+    "b": "횡성군하수도사업특별회계"
+   },
+   {
+    "cd": "411",
+    "n": 98,
+    "a": "4-H본부 육성기금",
+    "b": "행정도시예정지역 이주민생활안정기금"
+   },
+   {
+    "cd": "413",
+    "n": 94,
+    "a": "강릉시옥외광고발전기금",
+    "b": "화장장주변지역 주민지원기금"
+   }
+  ],
+  "fld": [
+   {
+    "cd": "120",
+    "nms": "교통및물류 / 수송및교통"
+   },
+   {
+    "cd": "070",
+    "nms": "환경 / 환경보호"
+   },
+   {
+    "cd": "110",
+    "nms": "산업ㆍ중소기업 / 산업ㆍ중소기업및에너지"
+   }
+  ],
+  "part": [
+   {
+    "nm": "재정ㆍ금융",
+    "cds": "014, 14"
+   },
+   {
+    "nm": "노인ㆍ청소년",
+    "cds": "85, 085"
+   },
+   {
+    "nm": "노동",
+    "cds": "86, 086"
+   },
+   {
+    "nm": "상하수도ㆍ수질",
+    "cds": "71, 071"
+   },
+   {
+    "nm": "문화예술",
+    "cds": "61, 061"
+   }
+  ],
+  "laf": [
+   {
+    "cd": "2813000",
+    "nms": "인천남구 / 인천미추홀구"
+   }
+  ],
+  "n_acnt_cd": 146,
+  "n_acnt_nm": 1893
+ },
+ "exe_ymd_note": "수집 시 exe_ymd=YYYY1231 만 호출했다(연말 확정 스냅샷)."
+};
+const F = n => n.toLocaleString("ko-KR");
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tb = id => $(id).querySelector("tbody");
+
+/* 각 필드가 무엇인가 — 설명은 코드가 아니라 사람이 쓴다. 수치·값은 field_profile.json 에서 온다. */
+const DESC = {
+  fy:            ["회계연도(정수). <b>우리가 붙인 값</b> — <code>fyr</code>의 사본", "add"],
+  fyr:           ["회계연도(문자)"],
+  wa_laf_cd:     ["광역시도 코드"],
+  wa_laf_hg_nm:  ["광역시도 이름"],
+  laf_cd:        ["집행 자치단체 코드 — 지방재정365 내부 체계"],
+  laf_hg_nm:     ["집행 자치단체 이름"],
+  acnt_dv_cd:    ["회계구분 코드 — 100=일반회계, 2xx=특별회계, 4xx=기금"],
+  acnt_dv_nm:    ["회계·기금의 <b>실제 이름</b>. 단체마다 다르다"],
+  dept_cd:       ["집행 부서코드. <b>이름 필드가 없다</b>", "key"],
+  dbiz_cd:       ["세부사업코드 16자리 = 기관코드(7)+개설연도(4)+일련번호(5)", "key"],
+  dbiz_nm:       ["세부사업 이름"],
+  exe_ymd:       ["집행 기준일. 우리는 <code>YYYY1231</code>만 수집했다"],
+  bdg_cash_amt:  ["예산액(원). 아래 네 재원의 합"],
+  bdg_ntep:      ["국비(원)"],
+  capep:         ["시도비(원)"],
+  sggep:         ["시군구비(원)"],
+  etc_amt:       ["기타 재원(원)"],
+  ep_amt:        ["<b>지출액(원) — 이 사이트의 모든 집계 기준</b>", "key"],
+  cpl_amt:       ["뜻 미확정. 이 사이트는 쓰지 않는다", "warn"],
+  fld_cd:        ["분야 코드(대분류)"],
+  fld_nm:        ["분야 이름"],
+  ane_part_cd:   ["부문 코드(중분류). 자릿수가 섞여 있다", "warn"],
+  part_nm:       ["부문 이름"],
+  padm_laf_cd:   ["행정 기관코드. <code>laf_cd</code>와 다른 체계"],
+  lup_ord:       ["화면 정렬 순서. 단체마다 하나"],
+  zon_cd:        ["시도 구분 = <code>laf_cd</code> 앞 2자리"],
+  source_file:   ["이 행이 나온 원본 JSON 경로. <b>우리가 붙인 값</b>", "add"],
+};
+const TAG = {add:'<span class="kw">우리가 추가</span>', key:'<span class="kw">핵심</span>', warn:'<span class="kw">주의</span>'};
+
+$("fldMeta").textContent =
+  `전체 ${F(FP.total_rows)}행 · 필드 ${FP.n_fields}개 · 예시는 ${FP.fy}년 · 널값은 어느 필드에도 없습니다.`;
+
+/* 실례 한 행 */
+tb("fldExample").innerHTML = FP.fields.map(f => {
+  const [d, tag] = DESC[f.name] || ["—"];
+  const v = FP.example[f.name];
+  const num = /amt|ntep|capep|sggep/.test(f.name) && /^\d+$/.test(v);  // lup_ord 는 코드성 값이라 제외
+  return `<tr><td><code>${f.name}</code></td>
+    <td style="font-family:'IBM Plex Mono',monospace;font-size:12.5px">${num ? F(+v) : esc(v)}</td>
+    <td>${d}${tag ? " " + TAG[tag] : ""}</td></tr>`;
+}).join("");
+
+/* 검증된 규칙 */
+const I = FP.identities, pct = k => `${(I[k] / I.n * 100).toFixed(1)}%`;
+tb("fldRules").innerHTML = [
+  ["<code>bdg_ntep + capep + sggep + etc_amt = bdg_cash_amt</code>", pct("src_eq_bdg"),
+   "재원 내역의 합이 예산액과 정확히 같다. 예외가 없다"],
+  ["<code>ep_amt ≤ bdg_cash_amt</code>", pct("ep_le_bdg"), "지출은 예산을 넘지 않는다"],
+  ["<code>zon_cd = laf_cd</code> 앞 2자리", pct("zon_eq"), "시도 구분은 단체코드에서 유도된다"],
+  ["<code>cpl_amt = bdg_cash_amt</code>", pct("cpl_eq"), `나머지 중 ${pct("cpl_lt")}는 예산액보다 작다`],
+].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("");
+
+tb("fldLevels").innerHTML = FP.levels.map(l =>
+  `<tr><td>${l.lvl}</td><td>${F(l.n)}</td><td>${l.ntep}%</td><td>${l.capep}%</td>
+   <td${l.sggep === 0 ? ' style="font-weight:700"' : ""}>${l.sggep}%</td></tr>`).join("");
+
+/* 함정 */
+const T = FP.traps;
+$("trapAcntCd").textContent = F(T.n_acnt_cd);
+$("trapAcntNm").textContent = F(T.n_acnt_nm);
+tb("trapAcnt").innerHTML = T.acnt.map(r =>
+  `<tr><td><code>${r.cd}</code></td><td>${r.n}</td><td>${esc(r.a)} … ${esc(r.b)}</td></tr>`).join("");
+tb("trapPart").innerHTML = T.part.map(r =>
+  `<tr><td>${esc(r.nm)}</td><td><code>${esc(r.cds)}</code></td></tr>`).join("");
+tb("trapFld").innerHTML = T.fld.map(r =>
+  `<tr><td><code>${r.cd}</code></td><td>${esc(r.nms)}</td></tr>`).join("");
+$("trapLaf").innerHTML = T.laf.map(r =>
+  `<code>${r.cd}</code>이 ${esc(r.nms).replace(" / ", " → ")}로 바뀌었지만`).join(", ");
+$("cplEq").textContent = pct("cpl_eq");
+$("cplLt").textContent = pct("cpl_lt");
+
+</script>
+</body>
+</html>
