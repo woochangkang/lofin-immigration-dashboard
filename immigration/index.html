@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>이민·다문화 재정 — 전체 요약 · 지방재정 세부사업 데이터</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* ══ tokens (alio-dashboard 아이덴티티) ══ */
+:root{
+  color-scheme:light;
+  --page:#e9edf0; --surface:#fafbfc; --surface2:#f1f4f7;
+  --ink:#0f1a21; --ink2:#4a5b66; --muted:#77899a;
+  --grid:#e3e9ed; --axis:#ccd6dd; --ring:#ccd6dd;
+  --accent:#0f4c5c; --accent-soft:#dceaee; --accent-ink:#0f4c5c;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+  --seq100:#cde2fb; --seq200:#9ec5f4; --seq300:#6da7ec; --seq400:#3987e5;
+  --seq500:#256abf; --seq600:#184f95; --seq700:#0d366b;
+  --shadow:0 1px 0 rgba(15,26,33,.04), 0 1px 3px rgba(15,26,33,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme:dark;
+    --page:#0e1519; --surface:#18212a; --surface2:#1e2831;
+    --ink:#e7eef3; --ink2:#9cadb9; --muted:#6c7e8b;
+    --grid:#222d35; --axis:#2a363f; --ring:#2a363f;
+    --accent:#6cbcd0; --accent-soft:#14313b; --accent-ink:#8fd0e0;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 1px 3px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0e1519; --surface:#18212a; --surface2:#1e2831;
+  --ink:#e7eef3; --ink2:#9cadb9; --muted:#6c7e8b;
+  --grid:#222d35; --axis:#2a363f; --ring:#2a363f;
+  --accent:#6cbcd0; --accent-soft:#14313b; --accent-ink:#8fd0e0;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 1px 3px rgba(0,0,0,.35);
+}
+/* 반전 밴드 — 두 테마 모두 어두운 판 (alio 장치) */
+.band{
+  background:#101a22; color:#e9f0f4;
+  --surface:#182530; --surface2:#1f2e3a;
+  --ink:#e9f0f4; --ink2:#a3b6c2; --muted:#7c8fa0;
+  --ring:#2c3d4a; --grid:#233340; --axis:#2c3d4a;
+  --accent-ink:#9ad6e6; --accent-soft:#1b3742;
+}
+:root[data-theme="dark"] .band{ background:#070d11 }
+@media (prefers-color-scheme: dark){ :root:where(:not([data-theme="light"])) .band{ background:#070d11 } }
+html{zoom:1.25}  /* 전체 25% 확대 (사용자 요청 2026-09-03) */
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+body{margin:0;background:var(--page);color:var(--ink);
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-size:14.5px;line-height:1.62;-webkit-font-smoothing:antialiased;
+  word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,p,li,td,th,.desc{word-break:keep-all;overflow-wrap:break-word}
+h1,h2{font-family:"Gowun Batang","Apple SD Gothic Neo",serif;text-wrap:balance;font-weight:700}
+a{color:var(--accent-ink)}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+.band .wrap{padding:34px 20px 30px}
+header h1{font-size:25px;margin:0 0 6px}
+header .sub{color:var(--ink2);max-width:72ch;margin:0}
+.deflabel{display:inline-block;margin-top:12px;padding:3px 10px;border:1px solid var(--ring);
+  border-radius:99px;font-size:12px;color:var(--ink2);background:var(--surface)}
+section{margin-top:38px}
+h2{font-size:17.5px;margin:0 0 3px}
+.desc{color:var(--ink2);font-size:13px;margin:0 0 12px;max-width:80ch}
+.card{background:var(--surface);border:1px solid var(--ring);border-radius:10px;padding:16px;box-shadow:var(--shadow)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px}
+.kpi{background:var(--surface);border:1px solid var(--ring);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:12px;color:var(--ink2);letter-spacing:.02em}
+.kpi .val{font-size:24px;font-weight:600;margin-top:2px;
+  font-family:"IBM Plex Mono","IBM Plex Sans KR",monospace;font-variant-numeric:tabular-nums}
+.kpi .note{font-size:12px;color:var(--muted);margin-top:2px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:6px 0 4px}
+.legend .it{display:flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:3px;flex:none}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+select,input[type=search]{font:inherit;font-size:13px;color:var(--ink);background:var(--surface);
+  border:1px solid var(--axis);border-radius:7px;padding:5px 9px}
+select:focus-visible,input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:inherit}
+.tick{font-size:11px;fill:var(--muted)}
+.dlabel{font-size:11.5px;fill:var(--ink2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+.tooltip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--ring);
+  border-radius:8px;padding:8px 11px;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.16);
+  z-index:10;display:none;max-width:280px}
+.tooltip b{font-weight:700}
+.tooltip .row{display:flex;justify-content:space-between;gap:14px;color:var(--ink2)}
+.tbl-wrap{overflow:auto;max-height:480px;border:1px solid var(--ring);border-radius:10px;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13px;background:var(--surface)}
+th,td{padding:7px 12px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td:nth-child(n+3){font-family:"IBM Plex Mono","IBM Plex Sans KR",monospace}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+thead th{position:sticky;top:0;background:var(--surface);color:var(--ink2);font-weight:500;
+  border-bottom:1px solid var(--axis);cursor:pointer;user-select:none}
+thead th.on{color:var(--ink);font-weight:700}
+tbody tr{border-bottom:1px solid var(--grid)}
+tbody tr:hover{background:var(--accent-soft)}
+.bar-cell{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.mini{height:8px;border-radius:2px;background:var(--s1);flex:none}
+footer{margin-top:44px;color:var(--muted);font-size:12px;border-top:1px solid var(--axis);padding-top:14px;max-width:88ch}
+footer p{margin:4px 0}
+
+
+/* ── 사이트 공통 (다중 페이지) ── */
+.nav{display:flex;gap:4px 18px;flex-wrap:wrap;align-items:baseline;margin-top:14px;font-size:13.5px}
+.nav a{color:var(--ink2);text-decoration:none;padding:3px 0;border-bottom:2px solid transparent}
+.nav a:hover{color:var(--ink)}
+.nav a.on{color:var(--ink);font-weight:700;border-bottom-color:var(--accent-ink)}
+.nav .grp{color:var(--muted);font-size:12px;margin-left:6px}
+.sitename{font-size:12.5px;letter-spacing:.04em;color:var(--ink2);margin:0 0 2px}
+.sitename a{color:inherit;text-decoration:none}
+.prose{max-width:76ch}
+.prose p{margin:0 0 12px}
+.prose ul{padding-left:20px}
+.lede{font-size:15.5px;color:var(--ink2)}
+.muted{color:var(--muted);font-size:13px}
+.cite{font-size:13px;color:var(--ink2);border-left:3px solid var(--accent);padding-left:10px}
+code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:var(--surface2);padding:1px 5px;border-radius:4px}
+.kw{display:inline-block;font-size:13px;color:var(--ink2);background:var(--surface2);border-radius:6px;padding:2px 8px;margin-top:4px}
+.steps{padding-left:22px}
+.steps li{margin-bottom:9px}
+.log{list-style:none;padding:0}
+.log li{padding:6px 0;border-bottom:1px solid var(--grid);font-size:14px}
+.log .d{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--muted);margin-right:10px}
+table.plain{border-collapse:collapse;width:100%;font-size:13.5px;margin:6px 0 10px}
+table.plain th,table.plain td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--grid);vertical-align:top;white-space:normal;font-family:inherit}
+table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid var(--axis)}
+.tbl-wrap.static{max-height:none}
+.cards .card.link{display:block;text-decoration:none;color:inherit}
+.cards .card.link:hover{border-color:var(--accent)}
+.cards .ttl{font-family:"Gowun Batang",serif;font-weight:700;font-size:16px;margin-bottom:4px;color:var(--accent-ink)}
+.cards p{margin:0;font-size:13.5px;color:var(--ink2)}
+.btn{display:inline-block;padding:7px 14px;border:1px solid var(--accent);border-radius:8px;color:var(--accent-ink);text-decoration:none;font-size:13.5px}
+.btn:hover{background:var(--accent-soft)}
+
+</style>
+</head>
+<body>
+<header class="band">
+<div class="wrap">
+  <p class="sitename"><a href="../">지방재정 세부사업 데이터</a></p>
+  <h1>이민·다문화 재정 — 전체 요약</h1>
+  <nav class="nav"><a href="../">자료 소개</a><a href="../data/">수집 과정</a><span class="grp">이민·다문화 재정</span><a href="../immigration/" class=on>전체 요약</a><a href="../immigration/regions/">시군구별</a><a href="../immigration/methods/">방법·검증</a></nav>
+</div>
+</header>
+<div class="wrap" style="padding-top:6px">
+<div class="kpis" id="kpis"></div>
+
+<section>
+  <h2>연도별 지출 추이</h2>
+  <p class="desc">확정 분류(core) 사업 지출액. 분류 보류(ambiguous) 사업은 별도 선으로 표시 — LLM 분류 후 일부가 편입될 수 있는 상한 여유분.</p>
+  <div class="card">
+    <div class="legend" id="lgTs"></div>
+    <div id="chTs"></div>
+  </div>
+</section>
+
+<section>
+  <h2>재원 구성</h2>
+  <p class="desc">확정 사업 지출의 국비·시도비·시군구비 구성. 중앙 위임(국비) 대 지방 자체 재원의 비중 변화를 보여준다.</p>
+  <div class="card">
+    <div class="legend" id="lgSrc"></div>
+    <div id="chSrc"></div>
+  </div>
+</section>
+
+<section>
+  <h2>지출 구성 — 누구를 위한 예산인가</h2>
+  <p class="desc">확정 사업을 대상 집단별 3분류로 나눈 연도별 구성비. ① 다문화가족·결혼이민(다문화·결혼이민·이주여성·중도입국) ② 외국인노동(근로자·계절근로) ③ 외국인주민 일반(주민·유학생·귀화·동포 등). 사업명 규칙 분류 — 혼합 사업은 노동 &gt; 가족 &gt; 일반 우선순위로 배정.</p>
+  <div class="card">
+    <div class="legend" id="lgCat"></div>
+    <div id="chCat"></div>
+  </div>
+</section>
+
+<section>
+  <h2>지역별 분포</h2>
+  <p class="desc">왼쪽: 시도별 총지출 대비 이민·다문화 지출 비중(%)의 연도별 변화. 오른쪽: 선택 연도의 시도별 지출액.</p>
+  <div class="controls">
+    <label for="selYear">연도</label>
+    <select id="selYear"></select>
+  </div>
+  <div class="grid2">
+    <div class="card"><div id="chHeat"></div></div>
+    <div class="card"><div id="chSido"></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>대표 세부사업</h2>
+  <p class="desc">10년 누적 지출액 상위 15개 사업명(공백·중점 표기 차이는 병합). 다문화가족지원센터 계열이 압도적 비중을 차지한다.</p>
+  <div class="card"><div id="chTop"></div></div>
+</section>
+<footer>
+  <p><b>출처</b> 행정안전부 지방재정365 「세부사업별 세출현황」 오픈API (lofin365.go.kr, 출처표시·자유이용). 2016–2025 회계연도, 12월 31일 집행 스냅샷, 243개 자치단체 전수. 수집·검증 2026-09-02.</p>
+  <p>본 사이트의 집계와 분류는 연구자의 가공물입니다 · <a href="../data/">수집 과정</a> · <a href="../immigration/methods/">분류 방법</a></p>
+</footer>
+</div>
+<div class="tooltip" id="tip"></div>
+<script>
+const DATA = {"generated": "2026-09-04", "definition": "사업명 명시 표적(core) 기준; ambiguous는 LLM 분류 대기, excluded(투자·관광·환자유치)는 제외", "cats": {"family": "다문화가족·결혼이민", "labor": "외국인노동", "general": "외국인주민 일반"}, "by_year": [{"fy": 2016, "core_ep": 238216421675, "core_n": 2379, "core_laf": 242, "amb_ep": 6185651047, "amb_n": 72, "ntep": 119957471544, "capep": 66918081297, "sggep": 59210873939, "total_ep": 253993090136277, "cat_family": 207273858773, "cat_labor": 5839233880, "cat_general": 25103329022}, {"fy": 2017, "core_ep": 239550862834, "core_n": 2948, "core_laf": 243, "amb_ep": 6058515330, "amb_n": 83, "ntep": 112129786000, "capep": 72500848000, "sggep": 67377334000, "total_ep": 274995019824086, "cat_family": 207195177154, "cat_labor": 6329505590, "cat_general": 26026180090}, {"fy": 2018, "core_ep": 266789597827, "core_n": 3011, "core_laf": 243, "amb_ep": 6277932732, "amb_n": 86, "ntep": 123392440080, "capep": 82245269710, "sggep": 78437436010, "total_ep": 290392089311507, "cat_family": 231908102466, "cat_labor": 7606091370, "cat_general": 27275403991}, {"fy": 2019, "core_ep": 347069117119, "core_n": 3249, "core_laf": 242, "amb_ep": 6806170004, "amb_n": 82, "ntep": 162472743780, "capep": 97302202745, "sggep": 104116787549, "total_ep": 340915948786444, "cat_family": 304532148429, "cat_labor": 7989895150, "cat_general": 34547073540}, {"fy": 2020, "core_ep": 374344986434, "core_n": 3390, "core_laf": 243, "amb_ep": 7147598060, "amb_n": 99, "ntep": 153796638695, "capep": 135324142697, "sggep": 105485896968, "total_ep": 420011703704128, "cat_family": 319536999755, "cat_labor": 7906661210, "cat_general": 46901325469}, {"fy": 2021, "core_ep": 399038971382, "core_n": 3278, "core_laf": 243, "amb_ep": 9264658520, "amb_n": 116, "ntep": 177121903550, "capep": 120352313530, "sggep": 118654316220, "total_ep": 435987438851750, "cat_family": 341639193272, "cat_labor": 15553601925, "cat_general": 41846176185}, {"fy": 2022, "core_ep": 442021628502, "core_n": 3298, "core_laf": 243, "amb_ep": 10067626517, "amb_n": 108, "ntep": 192156680284, "capep": 133951837451, "sggep": 144208605915, "total_ep": 455400281307714, "cat_family": 374365339056, "cat_labor": 17900427785, "cat_general": 49755861661}, {"fy": 2023, "core_ep": 492583730351, "core_n": 3334, "core_laf": 243, "amb_ep": 11512823644, "amb_n": 146, "ntep": 198456128360, "capep": 155256440250, "sggep": 188214169310, "total_ep": 452455413396216, "cat_family": 398001132095, "cat_labor": 41479826382, "cat_general": 53102771874}, {"fy": 2024, "core_ep": 630619922365, "core_n": 3312, "core_laf": 243, "amb_ep": 18521786786, "amb_n": 186, "ntep": 267580334387, "capep": 188045134613, "sggep": 229607381641, "total_ep": 467526132096425, "cat_family": 500581357345, "cat_labor": 69487725120, "cat_general": 60550839900}, {"fy": 2025, "core_ep": 666449632612, "core_n": 3413, "core_laf": 243, "amb_ep": 30377113562, "amb_n": 227, "ntep": 274329524830, "capep": 199863918602, "sggep": 242664892114, "total_ep": 524566979869466, "cat_family": 511850606976, "cat_labor": 88688159068, "cat_general": 65910866568}], "sido_year": [{"sido": "강원", "fy": 2016, "ep": 13685130009, "n": 192, "share": 0.102}, {"sido": "강원", "fy": 2017, "ep": 13280105346, "n": 219, "share": 0.094}, {"sido": "강원", "fy": 2018, "ep": 15223761957, "n": 202, "share": 0.107}, {"sido": "강원", "fy": 2019, "ep": 19572544007, "n": 237, "share": 0.114}, {"sido": "강원", "fy": 2020, "ep": 17999864570, "n": 232, "share": 0.089}, {"sido": "강원", "fy": 2021, "ep": 21056872350, "n": 241, "share": 0.1}, {"sido": "강원", "fy": 2022, "ep": 23170792596, "n": 235, "share": 0.105}, {"sido": "강원", "fy": 2023, "ep": 25341069270, "n": 240, "share": 0.113}, {"sido": "강원", "fy": 2024, "ep": 33224427417, "n": 233, "share": 0.146}, {"sido": "강원", "fy": 2025, "ep": 35802441558, "n": 246, "share": 0.146}, {"sido": "경기", "fy": 2016, "ep": 42013545227, "n": 684, "share": 0.089}, {"sido": "경기", "fy": 2017, "ep": 44459336900, "n": 760, "share": 0.085}, {"sido": "경기", "fy": 2018, "ep": 48442505749, "n": 740, "share": 0.088}, {"sido": "경기", "fy": 2019, "ep": 66190912877, "n": 782, "share": 0.1}, {"sido": "경기", "fy": 2020, "ep": 72034473898, "n": 791, "share": 0.086}, {"sido": "경기", "fy": 2021, "ep": 79687982355, "n": 783, "share": 0.088}, {"sido": "경기", "fy": 2022, "ep": 83190872718, "n": 808, "share": 0.094}, {"sido": "경기", "fy": 2023, "ep": 97323464189, "n": 781, "share": 0.111}, {"sido": "경기", "fy": 2024, "ep": 114689461820, "n": 761, "share": 0.126}, {"sido": "경기", "fy": 2025, "ep": 114136016371, "n": 776, "share": 0.108}, {"sido": "경남", "fy": 2016, "ep": 18548794510, "n": 199, "share": 0.1}, {"sido": "경남", "fy": 2017, "ep": 19269517346, "n": 263, "share": 0.097}, {"sido": "경남", "fy": 2018, "ep": 21076990884, "n": 268, "share": 0.099}, {"sido": "경남", "fy": 2019, "ep": 26242202337, "n": 292, "share": 0.106}, {"sido": "경남", "fy": 2020, "ep": 26277752374, "n": 244, "share": 0.087}, {"sido": "경남", "fy": 2021, "ep": 30059475040, "n": 250, "share": 0.094}, {"sido": "경남", "fy": 2022, "ep": 33367885224, "n": 231, "share": 0.101}, {"sido": "경남", "fy": 2023, "ep": 35825551846, "n": 247, "share": 0.108}, {"sido": "경남", "fy": 2024, "ep": 51561219678, "n": 249, "share": 0.153}, {"sido": "경남", "fy": 2025, "ep": 59993455360, "n": 263, "share": 0.16}, {"sido": "경북", "fy": 2016, "ep": 24473615940, "n": 256, "share": 0.121}, {"sido": "경북", "fy": 2017, "ep": 21761324044, "n": 316, "share": 0.1}, {"sido": "경북", "fy": 2018, "ep": 24124015106, "n": 336, "share": 0.106}, {"sido": "경북", "fy": 2019, "ep": 30227702692, "n": 348, "share": 0.113}, {"sido": "경북", "fy": 2020, "ep": 29523743292, "n": 340, "share": 0.095}, {"sido": "경북", "fy": 2021, "ep": 31628597656, "n": 275, "share": 0.1}, {"sido": "경북", "fy": 2022, "ep": 36935764651, "n": 277, "share": 0.105}, {"sido": "경북", "fy": 2023, "ep": 42163640497, "n": 275, "share": 0.12}, {"sido": "경북", "fy": 2024, "ep": 53277652084, "n": 298, "share": 0.147}, {"sido": "경북", "fy": 2025, "ep": 58971717140, "n": 304, "share": 0.139}, {"sido": "광주", "fy": 2016, "ep": 7463112130, "n": 50, "share": 0.128}, {"sido": "광주", "fy": 2017, "ep": 6972683150, "n": 72, "share": 0.11}, {"sido": "광주", "fy": 2018, "ep": 7426485844, "n": 81, "share": 0.109}, {"sido": "광주", "fy": 2019, "ep": 9448340480, "n": 86, "share": 0.115}, {"sido": "광주", "fy": 2020, "ep": 9921980130, "n": 82, "share": 0.094}, {"sido": "광주", "fy": 2021, "ep": 10620717840, "n": 91, "share": 0.095}, {"sido": "광주", "fy": 2022, "ep": 12210009640, "n": 99, "share": 0.107}, {"sido": "광주", "fy": 2023, "ep": 13175641960, "n": 94, "share": 0.118}, {"sido": "광주", "fy": 2024, "ep": 18008899730, "n": 98, "share": 0.154}, {"sido": "광주", "fy": 2025, "ep": 19015732280, "n": 99, "share": 0.148}, {"sido": "대구", "fy": 2016, "ep": 10798463980, "n": 81, "share": 0.108}, {"sido": "대구", "fy": 2017, "ep": 9690502879, "n": 99, "share": 0.093}, {"sido": "대구", "fy": 2018, "ep": 11204520030, "n": 88, "share": 0.1}, {"sido": "대구", "fy": 2019, "ep": 14188324490, "n": 100, "share": 0.112}, {"sido": "대구", "fy": 2020, "ep": 14037323004, "n": 112, "share": 0.074}, {"sido": "대구", "fy": 2021, "ep": 14955886404, "n": 105, "share": 0.09}, {"sido": "대구", "fy": 2022, "ep": 17459617318, "n": 121, "share": 0.101}, {"sido": "대구", "fy": 2023, "ep": 18819666169, "n": 124, "share": 0.114}, {"sido": "대구", "fy": 2024, "ep": 26101401270, "n": 101, "share": 0.147}, {"sido": "대구", "fy": 2025, "ep": 27228426610, "n": 96, "share": 0.136}, {"sido": "대전", "fy": 2016, "ep": 4158511300, "n": 34, "share": 0.074}, {"sido": "대전", "fy": 2017, "ep": 4062913490, "n": 44, "share": 0.064}, {"sido": "대전", "fy": 2018, "ep": 4174298460, "n": 52, "share": 0.06}, {"sido": "대전", "fy": 2019, "ep": 5826468520, "n": 47, "share": 0.072}, {"sido": "대전", "fy": 2020, "ep": 6044548190, "n": 52, "share": 0.059}, {"sido": "대전", "fy": 2021, "ep": 7282400270, "n": 51, "share": 0.069}, {"sido": "대전", "fy": 2022, "ep": 8578990350, "n": 46, "share": 0.078}, {"sido": "대전", "fy": 2023, "ep": 9215307310, "n": 49, "share": 0.088}, {"sido": "대전", "fy": 2024, "ep": 11535042920, "n": 46, "share": 0.104}, {"sido": "대전", "fy": 2025, "ep": 11634627620, "n": 44, "share": 0.094}, {"sido": "부산", "fy": 2016, "ep": 10130744520, "n": 74, "share": 0.064}, {"sido": "부산", "fy": 2017, "ep": 9681538680, "n": 114, "share": 0.059}, {"sido": "부산", "fy": 2018, "ep": 10901952280, "n": 110, "share": 0.063}, {"sido": "부산", "fy": 2019, "ep": 13733054920, "n": 120, "share": 0.072}, {"sido": "부산", "fy": 2020, "ep": 15270153810, "n": 146, "share": 0.064}, {"sido": "부산", "fy": 2021, "ep": 17476307830, "n": 138, "share": 0.071}, {"sido": "부산", "fy": 2022, "ep": 19353842140, "n": 145, "share": 0.076}, {"sido": "부산", "fy": 2023, "ep": 19905945200, "n": 141, "share": 0.078}, {"sido": "부산", "fy": 2024, "ep": 25271506219, "n": 145, "share": 0.091}, {"sido": "부산", "fy": 2025, "ep": 25894105550, "n": 125, "share": 0.084}, {"sido": "서울", "fy": 2016, "ep": 28295751273, "n": 96, "share": 0.068}, {"sido": "서울", "fy": 2017, "ep": 31773018222, "n": 140, "share": 0.071}, {"sido": "서울", "fy": 2018, "ep": 35066712458, "n": 145, "share": 0.072}, {"sido": "서울", "fy": 2019, "ep": 37772458962, "n": 142, "share": 0.069}, {"sido": "서울", "fy": 2020, "ep": 64506430085, "n": 241, "share": 0.093}, {"sido": "서울", "fy": 2021, "ep": 52312809990, "n": 188, "share": 0.076}, {"sido": "서울", "fy": 2022, "ep": 55515376353, "n": 182, "share": 0.073}, {"sido": "서울", "fy": 2023, "ep": 58865166348, "n": 166, "share": 0.08}, {"sido": "서울", "fy": 2024, "ep": 66743503065, "n": 155, "share": 0.091}, {"sido": "서울", "fy": 2025, "ep": 69513938536, "n": 162, "share": 0.085}, {"sido": "세종", "fy": 2016, "ep": 663968000, "n": 4, "share": 0.061}, {"sido": "세종", "fy": 2017, "ep": 1063776000, "n": 9, "share": 0.095}, {"sido": "세종", "fy": 2018, "ep": 1851737810, "n": 8, "share": 0.136}, {"sido": "세종", "fy": 2019, "ep": 1881108520, "n": 7, "share": 0.132}, {"sido": "세종", "fy": 2020, "ep": 977372000, "n": 6, "share": 0.057}, {"sido": "세종", "fy": 2021, "ep": 1108959000, "n": 7, "share": 0.055}, {"sido": "세종", "fy": 2022, "ep": 1365596160, "n": 7, "share": 0.065}, {"sido": "세종", "fy": 2023, "ep": 1628090000, "n": 6, "share": 0.067}, {"sido": "세종", "fy": 2024, "ep": 2073161700, "n": 6, "share": 0.096}, {"sido": "세종", "fy": 2025, "ep": 2054009900, "n": 8, "share": 0.085}, {"sido": "울산", "fy": 2016, "ep": 4585305260, "n": 24, "share": 0.097}, {"sido": "울산", "fy": 2017, "ep": 4761418200, "n": 44, "share": 0.084}, {"sido": "울산", "fy": 2018, "ep": 5131578710, "n": 45, "share": 0.086}, {"sido": "울산", "fy": 2019, "ep": 9497125450, "n": 50, "share": 0.15}, {"sido": "울산", "fy": 2020, "ep": 7081401982, "n": 44, "share": 0.092}, {"sido": "울산", "fy": 2021, "ep": 8588614650, "n": 44, "share": 0.112}, {"sido": "울산", "fy": 2022, "ep": 8697923430, "n": 41, "share": 0.108}, {"sido": "울산", "fy": 2023, "ep": 9273793210, "n": 38, "share": 0.107}, {"sido": "울산", "fy": 2024, "ep": 12410536451, "n": 43, "share": 0.144}, {"sido": "울산", "fy": 2025, "ep": 13667695580, "n": 45, "share": 0.142}, {"sido": "인천", "fy": 2016, "ep": 13246022511, "n": 94, "share": 0.115}, {"sido": "인천", "fy": 2017, "ep": 12725432200, "n": 120, "share": 0.102}, {"sido": "인천", "fy": 2018, "ep": 13447530503, "n": 130, "share": 0.104}, {"sido": "인천", "fy": 2019, "ep": 20225374754, "n": 156, "share": 0.129}, {"sido": "인천", "fy": 2020, "ep": 19857373507, "n": 175, "share": 0.102}, {"sido": "인천", "fy": 2021, "ep": 21479520472, "n": 188, "share": 0.1}, {"sido": "인천", "fy": 2022, "ep": 23624748898, "n": 204, "share": 0.112}, {"sido": "인천", "fy": 2023, "ep": 27146564662, "n": 220, "share": 0.127}, {"sido": "인천", "fy": 2024, "ep": 38126364597, "n": 220, "share": 0.167}, {"sido": "인천", "fy": 2025, "ep": 39058546760, "n": 197, "share": 0.156}, {"sido": "전남", "fy": 2016, "ep": 17549152730, "n": 171, "share": 0.103}, {"sido": "전남", "fy": 2017, "ep": 18574235931, "n": 231, "share": 0.101}, {"sido": "전남", "fy": 2018, "ep": 22066608300, "n": 273, "share": 0.115}, {"sido": "전남", "fy": 2019, "ep": 28204636250, "n": 303, "share": 0.12}, {"sido": "전남", "fy": 2020, "ep": 28122523970, "n": 337, "share": 0.105}, {"sido": "전남", "fy": 2021, "ep": 31632618990, "n": 322, "share": 0.111}, {"sido": "전남", "fy": 2022, "ep": 34688927710, "n": 321, "share": 0.117}, {"sido": "전남", "fy": 2023, "ep": 38357435680, "n": 342, "share": 0.13}, {"sido": "전남", "fy": 2024, "ep": 48704261910, "n": 330, "share": 0.162}, {"sido": "전남", "fy": 2025, "ep": 54886355392, "n": 371, "share": 0.166}, {"sido": "전북", "fy": 2016, "ep": 16986434785, "n": 179, "share": 0.128}, {"sido": "전북", "fy": 2017, "ep": 15372345790, "n": 215, "share": 0.108}, {"sido": "전북", "fy": 2018, "ep": 15588176086, "n": 206, "share": 0.104}, {"sido": "전북", "fy": 2019, "ep": 19594543020, "n": 228, "share": 0.111}, {"sido": "전북", "fy": 2020, "ep": 20952581683, "n": 265, "share": 0.098}, {"sido": "전북", "fy": 2021, "ep": 24803726150, "n": 245, "share": 0.11}, {"sido": "전북", "fy": 2022, "ep": 28838740514, "n": 254, "share": 0.122}, {"sido": "전북", "fy": 2023, "ep": 34815519479, "n": 266, "share": 0.148}, {"sido": "전북", "fy": 2024, "ep": 46319299516, "n": 261, "share": 0.188}, {"sido": "전북", "fy": 2025, "ep": 47029859997, "n": 266, "share": 0.177}, {"sido": "제주", "fy": 2016, "ep": 1923596710, "n": 13, "share": 0.047}, {"sido": "제주", "fy": 2017, "ep": 2079626560, "n": 16, "share": 0.042}, {"sido": "제주", "fy": 2018, "ep": 2757447920, "n": 18, "share": 0.053}, {"sido": "제주", "fy": 2019, "ep": 3103617770, "n": 22, "share": 0.055}, {"sido": "제주", "fy": 2020, "ep": 3182869900, "n": 24, "share": 0.051}, {"sido": "제주", "fy": 2021, "ep": 3703179190, "n": 18, "share": 0.058}, {"sido": "제주", "fy": 2022, "ep": 4311169670, "n": 20, "share": 0.06}, {"sido": "제주", "fy": 2023, "ep": 4625873250, "n": 21, "share": 0.064}, {"sido": "제주", "fy": 2024, "ep": 6453576228, "n": 25, "share": 0.086}, {"sido": "제주", "fy": 2025, "ep": 5687219725, "n": 25, "share": 0.071}, {"sido": "충남", "fy": 2016, "ep": 14702123780, "n": 127, "share": 0.105}, {"sido": "충남", "fy": 2017, "ep": 14404883976, "n": 161, "share": 0.097}, {"sido": "충남", "fy": 2018, "ep": 17262405110, "n": 170, "share": 0.11}, {"sido": "충남", "fy": 2019, "ep": 23660455960, "n": 185, "share": 0.123}, {"sido": "충남", "fy": 2020, "ep": 24273598369, "n": 171, "share": 0.107}, {"sido": "충남", "fy": 2021, "ep": 26207448225, "n": 209, "share": 0.111}, {"sido": "충남", "fy": 2022, "ep": 32327693680, "n": 183, "share": 0.128}, {"sido": "충남", "fy": 2023, "ep": 35410092421, "n": 197, "share": 0.139}, {"sido": "충남", "fy": 2024, "ep": 46776723550, "n": 198, "share": 0.172}, {"sido": "충남", "fy": 2025, "ep": 52641883403, "n": 216, "share": 0.174}, {"sido": "충북", "fy": 2016, "ep": 8992149010, "n": 101, "share": 0.088}, {"sido": "충북", "fy": 2017, "ep": 9618204120, "n": 125, "share": 0.087}, {"sido": "충북", "fy": 2018, "ep": 11042870620, "n": 139, "share": 0.097}, {"sido": "충북", "fy": 2019, "ep": 17700246110, "n": 144, "share": 0.129}, {"sido": "충북", "fy": 2020, "ep": 14280995670, "n": 128, "share": 0.09}, {"sido": "충북", "fy": 2021, "ep": 16433854970, "n": 123, "share": 0.097}, {"sido": "충북", "fy": 2022, "ep": 18383677450, "n": 124, "share": 0.1}, {"sido": "충북", "fy": 2023, "ep": 20690908860, "n": 127, "share": 0.114}, {"sido": "충북", "fy": 2024, "ep": 29342884210, "n": 143, "share": 0.158}, {"sido": "충북", "fy": 2025, "ep": 29233600830, "n": 170, "share": 0.14}], "top_biz": [{"nm": "가족센터 운영", "n": 704, "n_laf": 77, "ep": 396321853806}, {"nm": "다문화가족 특성화사업", "n": 646, "n_laf": 97, "ep": 276535864176}, {"nm": "폭력피해 이주여성 보호시설 운영지원", "n": 252, "n_laf": 27, "ep": 86547973736}, {"nm": "다문화가족지원센터 운영", "n": 222, "n_laf": 39, "ep": 72001944974}, {"nm": "다문화가족 특성화사업 운영", "n": 40, "n_laf": 8, "ep": 70148293578}, {"nm": "가족센터 운영지원", "n": 87, "n_laf": 11, "ep": 66360841784}, {"nm": "자치구 가족센터 운영 지원(다문화가족)", "n": 9, "n_laf": 1, "ep": 63893085260}, {"nm": "외국인주민 지원시설 설치·운영", "n": 10, "n_laf": 1, "ep": 63374964523}, {"nm": "가족센터 운영(통합)", "n": 19, "n_laf": 2, "ep": 57896449000}, {"nm": "다문화가족 특성화사업(기금/지원)", "n": 10, "n_laf": 1, "ep": 52843744000}, {"nm": "가족센터 운영(기금/지원)", "n": 19, "n_laf": 2, "ep": 51028336000}, {"nm": "가족(건강가정·다문화가족지원)센터 운영 지원", "n": 10, "n_laf": 1, "ep": 50906434000}, {"nm": "건강가정 및 다문화가족지원센터 운영", "n": 128, "n_laf": 17, "ep": 49594433460}, {"nm": "다문화가족 특화사업", "n": 114, "n_laf": 16, "ep": 47770215535}, {"nm": "가족센터 운영(국고)", "n": 30, "n_laf": 3, "ep": 46349783687}, {"nm": "다문화가족지원 특성화사업", "n": 58, "n_laf": 10, "ep": 45534161925}, {"nm": "다문화 특성화사업", "n": 69, "n_laf": 10, "ep": 35632678630}, {"nm": "다문화가족 자녀언어발달 지원", "n": 612, "n_laf": 129, "ep": 35597561820}, {"nm": "건강가정 및 다문화가족 지원센터 운영(보조)", "n": 20, "n_laf": 2, "ep": 35135645973}, {"nm": "가족센터 및 건강가정지원센터 운영(시군)", "n": 8, "n_laf": 1, "ep": 34516136000}, {"nm": "외국인아동 보육료 지원(시비)", "n": 8, "n_laf": 1, "ep": 32672479995}, {"nm": "건강가정 및 가족센터 운영(지원)", "n": 10, "n_laf": 1, "ep": 32386270000}, {"nm": "가족센터 운영(보조)", "n": 62, "n_laf": 7, "ep": 31411460027}, {"nm": "외국인아동 보육료 지원", "n": 99, "n_laf": 50, "ep": 30762784450}, {"nm": "다문화가족 지원", "n": 394, "n_laf": 44, "ep": 28871334264}, {"nm": "다문화가정 삶의질 향상", "n": 35, "n_laf": 4, "ep": 28621796360}, {"nm": "다문화가족 지원사업", "n": 139, "n_laf": 17, "ep": 26775246700}, {"nm": "생계급여(사할린)", "n": 10, "n_laf": 1, "ep": 26167957830}, {"nm": "결혼이민자 통번역서비스 지원", "n": 508, "n_laf": 113, "ep": 24114769963}, {"nm": "다문화가족 정착지원", "n": 73, "n_laf": 10, "ep": 23879713870}, {"nm": "외국인복지센터 운영", "n": 37, "n_laf": 4, "ep": 21538226100}, {"nm": "다문화 특화사업(국고)", "n": 16, "n_laf": 2, "ep": 20296411982}, {"nm": "폭력피해 이주여성 상담소 운영지원", "n": 81, "n_laf": 14, "ep": 20262719420}, {"nm": "가족센터 운영(자체)", "n": 79, "n_laf": 10, "ep": 19676107166}, {"nm": "다문화가족지원(자체)", "n": 59, "n_laf": 6, "ep": 19387549230}, {"nm": "외국인자녀 보육지원(도비)", "n": 28, "n_laf": 4, "ep": 17329381230}, {"nm": "자녀양육 및 자녀생활 등 방문교육서비스 지원", "n": 159, "n_laf": 37, "ep": 17196197248}, {"nm": "다문화가족지원센터 운영지원", "n": 75, "n_laf": 22, "ep": 16955585520}, {"nm": "외국인근로자 등 소외계층 의료서비스 지원", "n": 10, "n_laf": 1, "ep": 15740678000}, {"nm": "다문화 특화사업", "n": 81, "n_laf": 11, "ep": 15533577491}]};
+const EOK = 1e8;
+const F = n => n.toLocaleString("ko-KR", {maximumFractionDigits:0});
+const F1 = n => n.toLocaleString("ko-KR", {maximumFractionDigits:1, minimumFractionDigits:1});
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const YEARS = DATA.by_year.map(d=>d.fy);
+const LAST = DATA.by_year[DATA.by_year.length-1];
+
+
+/* ---------- tooltip ---------- */
+const tip = document.getElementById("tip");
+const ZOOM = 1.25;  // html{zoom}과 일치시킬 것
+function showTip(html, ev){
+  tip.innerHTML = html; tip.style.display = "block";
+  const cx = ev.clientX / ZOOM, cy = ev.clientY / ZOOM, vw = innerWidth / ZOOM;
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = cx + 14, y = cy - h - 10;
+  if (x + w > vw - 8) x = cx - w - 14;
+  if (y < 8) y = cy + 14;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+function hideTip(){ tip.style.display = "none"; }
+
+/* ---------- KPI ---------- */
+(function(){
+  const growth = LAST.core_ep / DATA.by_year[0].core_ep;
+  const share = LAST.core_ep / LAST.total_ep * 100;
+  const kpis = [
+    {lab:`${LAST.fy}년 지출액`, val:`${F(LAST.core_ep/EOK)}억원`, note:`2016년 대비 ${F1(growth)}배`},
+    {lab:`${LAST.fy}년 사업 건수`, val:F(LAST.core_n), note:"단체×세부사업 단위"},
+    {lab:"시행 단체", val:`${LAST.core_laf} / 243`, note:"모든 자치단체가 관련 사업 보유"},
+    {lab:"총지출 대비 비중", val:`${share.toFixed(3)}%`, note:`${LAST.fy}년, 전국 합계 기준`},
+  ];
+  document.getElementById("kpis").innerHTML = kpis.map(k =>
+    `<div class="kpi"><div class="lab">${k.lab}</div><div class="val">${k.val}</div><div class="note">${k.note}</div></div>`).join("");
+})();
+
+/* ---------- helpers ---------- */
+function niceMax(v){ const p = 10**Math.floor(Math.log10(v)); return Math.ceil(v/p*2)/2*p; }
+
+/* ---------- time series ---------- */
+(function(){
+  const W=1000,H=320,m={t:16,r:20,b:30,l:56};
+  const iw=W-m.l-m.r, ih=H-m.t-m.b;
+  const ymax = niceMax(Math.max(...DATA.by_year.map(d=>d.core_ep))/EOK);
+  const x = i => m.l + i/(YEARS.length-1)*iw;
+  const y = v => m.t + ih - v/ymax*ih;
+  let g = "";
+  for(let t=0;t<=4;t++){
+    const v=ymax*t/4, yy=y(v);
+    g += `<line x1="${m.l}" y1="${yy}" x2="${W-m.r}" y2="${yy}" stroke="var(--grid)"/>`;
+    g += `<text x="${m.l-8}" y="${yy+4}" text-anchor="end" class="tick">${F(v)}</text>`;
+  }
+  const core = DATA.by_year.map((d,i)=>[x(i), y(d.core_ep/EOK)]);
+  const amb  = DATA.by_year.map((d,i)=>[x(i), y(d.amb_ep/EOK)]);
+  const line = pts => pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  const area = line(core)+`L${x(YEARS.length-1)},${y(0)}L${x(0)},${y(0)}Z`;
+  let xt = YEARS.map((yr,i)=>`<text x="${x(i)}" y="${H-8}" text-anchor="middle" class="tick">${yr}</text>`).join("");
+  const lastP = core[core.length-1];
+  const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="연도별 이민·다문화 지출 추이">
+    ${g}
+    <path d="${area}" fill="var(--s1)" opacity="0.13"/>
+    <path d="${line(core)}" fill="none" stroke="var(--s1)" stroke-width="2"/>
+    <path d="${line(amb)}" fill="none" stroke="var(--s2)" stroke-width="2" stroke-dasharray="5 4"/>
+    ${core.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/>`).join("")}
+    ${amb.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"/>`).join("")}
+    <text x="${lastP[0]-8}" y="${lastP[1]-12}" text-anchor="end" class="dlabel" font-weight="700">${F(LAST.core_ep/EOK)}억</text>
+    <line x1="${m.l}" y1="${y(0)}" x2="${W-m.r}" y2="${y(0)}" stroke="var(--axis)"/>
+    ${xt}
+    <rect id="tsHover" x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" fill="transparent"/>
+  </svg>`;
+  document.getElementById("chTs").innerHTML = svg;
+  document.getElementById("lgTs").innerHTML =
+    `<span class="it"><span class="sw" style="background:var(--s1)"></span>확정(core)</span>
+     <span class="it"><span class="sw" style="background:var(--s2)"></span>분류 보류(ambiguous)</span>
+     <span class="it" style="color:var(--muted)">단위: 억원</span>`;
+  const hover = document.getElementById("tsHover");
+  hover.addEventListener("mousemove", ev=>{
+    const r = hover.getBoundingClientRect();
+    const i = Math.round((ev.clientX-r.left)/r.width*(YEARS.length-1));
+    const d = DATA.by_year[Math.max(0,Math.min(YEARS.length-1,i))];
+    showTip(`<b>${d.fy}년</b>
+      <div class="row"><span>확정 지출</span><b>${F(d.core_ep/EOK)}억원</b></div>
+      <div class="row"><span>사업 건수</span><span>${F(d.core_n)}</span></div>
+      <div class="row"><span>분류 보류</span><span>${F(d.amb_ep/EOK)}억원</span></div>
+      <div class="row"><span>총지출 대비</span><span>${(d.core_ep/d.total_ep*100).toFixed(3)}%</span></div>`, ev);
+  });
+  hover.addEventListener("mouseleave", hideTip);
+})();
+
+/* ---------- funding source stacked ---------- */
+(function(){
+  const W=1000,H=300,m={t:16,r:20,b:30,l:56};
+  const iw=W-m.l-m.r, ih=H-m.t-m.b;
+  const keys=[["ntep","국비","--s1"],["capep","시도비","--s2"],["sggep","시군구비","--s3"]];
+  const ymax = niceMax(Math.max(...DATA.by_year.map(d=>(d.ntep+d.capep+d.sggep)))/EOK);
+  const bw = iw/YEARS.length*0.55;
+  let g="";
+  for(let t=0;t<=4;t++){
+    const v=ymax*t/4, yy=m.t+ih-v/ymax*ih;
+    g+=`<line x1="${m.l}" y1="${yy}" x2="${W-m.r}" y2="${yy}" stroke="var(--grid)"/>`;
+    g+=`<text x="${m.l-8}" y="${yy+4}" text-anchor="end" class="tick">${F(v)}</text>`;
+  }
+  let bars="", xt="";
+  DATA.by_year.forEach((d,i)=>{
+    const cx = m.l + (i+0.5)/YEARS.length*iw;
+    let y0 = m.t+ih;
+    keys.forEach(([k,,c],ki)=>{
+      const hgt = d[k]/EOK/ymax*ih;
+      const gap = ki>0 ? 2 : 0;
+      bars+=`<rect x="${cx-bw/2}" y="${y0-hgt}" width="${bw}" height="${Math.max(0,hgt-gap)}"
+        rx="2" fill="var(${c})" data-i="${i}"/>`;
+      y0 -= hgt;
+    });
+    xt+=`<text x="${cx}" y="${H-8}" text-anchor="middle" class="tick">${d.fy}</text>`;
+  });
+  const svg=`<svg viewBox="0 0 ${W} ${H}" id="srcSvg" role="img" aria-label="재원 구성 누적 막대">
+    ${g}${bars}
+    <line x1="${m.l}" y1="${m.t+ih}" x2="${W-m.r}" y2="${m.t+ih}" stroke="var(--axis)"/>${xt}
+  </svg>`;
+  document.getElementById("chSrc").innerHTML=svg;
+  document.getElementById("lgSrc").innerHTML =
+    keys.map(([,n,c])=>`<span class="it"><span class="sw" style="background:var(${c})"></span>${n}</span>`).join("")
+    + `<span class="it" style="color:var(--muted)">단위: 억원 (확정 사업 기준)</span>`;
+  document.getElementById("srcSvg").addEventListener("mousemove", ev=>{
+    const t = ev.target;
+    if(t.tagName!=="rect"){ hideTip(); return; }
+    const d = DATA.by_year[+t.dataset.i];
+    const tot = d.ntep+d.capep+d.sggep;
+    showTip(`<b>${d.fy}년</b>
+      <div class="row"><span>국비</span><b>${F(d.ntep/EOK)}억 (${(d.ntep/tot*100).toFixed(0)}%)</b></div>
+      <div class="row"><span>시도비</span><b>${F(d.capep/EOK)}억 (${(d.capep/tot*100).toFixed(0)}%)</b></div>
+      <div class="row"><span>시군구비</span><b>${F(d.sggep/EOK)}억 (${(d.sggep/tot*100).toFixed(0)}%)</b></div>`, ev);
+  });
+  document.getElementById("srcSvg").addEventListener("mouseleave", hideTip);
+})();
+
+/* ---------- category composition (100% stacked) ---------- */
+const CATS = [["f","다문화가족·결혼이민","--s1"],["l","외국인노동","--s2"],["g","외국인주민 일반","--s3"]];
+function catLegend(el){
+  document.getElementById(el).innerHTML =
+    CATS.map(([,n,c])=>`<span class="it"><span class="sw" style="background:var(${c})"></span>${n}</span>`).join("")
+    + `<span class="it" style="color:var(--muted)">구성비(%)</span>`;
+}
+function stack100(elId, rows, height, width){
+  // rows: [{fy, f, l, g}] — 100% 누적 막대
+  const W=width||1000, H=height||300, m={t:16,r:20,b:30,l:44};
+  const iw=W-m.l-m.r, ih=H-m.t-m.b;
+  const bw = iw/rows.length*0.55;
+  let g="";
+  for(let t=0;t<=4;t++){
+    const yy=m.t+ih-t/4*ih;
+    g+=`<line x1="${m.l}" y1="${yy}" x2="${W-m.r}" y2="${yy}" stroke="var(--grid)"/>
+        <text x="${m.l-8}" y="${yy+4}" text-anchor="end" class="tick">${t*25}</text>`;
+  }
+  let bars="", xt="", labels="";
+  rows.forEach((d,i)=>{
+    const tot = d.f+d.l+d.g;
+    const cx = m.l+(i+0.5)/rows.length*iw;
+    let y0 = m.t+ih;
+    CATS.forEach(([k,,c],ki)=>{
+      const hgt = tot ? d[k]/tot*ih : 0;
+      const gap = ki>0 ? 2 : 0;
+      bars+=`<rect x="${cx-bw/2}" y="${y0-hgt}" width="${bw}" height="${Math.max(0,hgt-gap)}" rx="2" fill="var(${c})" data-i="${i}"/>`;
+      if(k==="f" && tot) labels+=`<text x="${cx}" y="${y0-hgt/2+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">${Math.round(d.f/tot*100)}</text>`;
+      y0 -= hgt;
+    });
+    xt+=`<text x="${cx}" y="${H-8}" text-anchor="middle" class="tick">${d.fy}</text>`;
+  });
+  const el = document.getElementById(elId);
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="대상 집단별 구성비 누적 막대">
+    ${g}${bars}${labels}
+    <line x1="${m.l}" y1="${m.t+ih}" x2="${W-m.r}" y2="${m.t+ih}" stroke="var(--axis)"/>${xt}</svg>`;
+  el.querySelector("svg").addEventListener("mousemove", ev=>{
+    const t=ev.target;
+    if(t.tagName!=="rect"){ hideTip(); return; }
+    const d=rows[+t.dataset.i], tot=d.f+d.l+d.g;
+    showTip(`<b>${d.fy}년</b>` + CATS.map(([k,n])=>
+      `<div class="row"><span>${n}</span><b>${F(d[k]/EOK)}억 (${tot?Math.round(d[k]/tot*100):0}%)</b></div>`).join(""), ev);
+  });
+  el.querySelector("svg").addEventListener("mouseleave", hideTip);
+}
+catLegend("lgCat");
+stack100("chCat", DATA.by_year.map(d=>({fy:d.fy, f:d.cat_family, l:d.cat_labor, g:d.cat_general})));
+
+/* ---------- heatmap (sido × year, share) ---------- */
+const SIDOS = (()=>{
+  const latest = DATA.sido_year.filter(d=>d.fy===LAST.fy).sort((a,b)=>b.share-a.share);
+  return latest.map(d=>d.sido);
+})();
+(function(){
+  const cellH=24, labW=54, m={t:26,r:8,b:8,l:labW};
+  const W=480, iw=W-m.l-m.r;
+  const H=m.t+SIDOS.length*cellH+m.b;
+  const cw=iw/YEARS.length;
+  const maxShare = Math.max(...DATA.sido_year.map(d=>d.share));
+  const ramp=["--seq100","--seq200","--seq300","--seq400","--seq500","--seq600","--seq700"];
+  const idx = new Map(DATA.sido_year.map(d=>[d.sido+"|"+d.fy, d]));
+  let cells="", yl="", xl="";
+  SIDOS.forEach((s,ri)=>{
+    yl+=`<text x="${m.l-8}" y="${m.t+ri*cellH+cellH/2+4}" text-anchor="end" class="tick" fill="var(--ink2)">${s}</text>`;
+    YEARS.forEach((yr,ci)=>{
+      const d = idx.get(s+"|"+yr);
+      const v = d ? d.share : 0;
+      const k = ramp[Math.min(ramp.length-1, Math.floor(v/maxShare*ramp.length))];
+      cells+=`<rect x="${m.l+ci*cw+1}" y="${m.t+ri*cellH+1}" width="${cw-2}" height="${cellH-2}" rx="2"
+        fill="var(${k})" data-s="${s}" data-y="${yr}"/>`;
+    });
+  });
+  YEARS.forEach((yr,ci)=>{
+    xl+=`<text x="${m.l+(ci+0.5)*cw}" y="${m.t-8}" text-anchor="middle" class="tick">${String(yr).slice(2)}</text>`;
+  });
+  const svg=`<svg viewBox="0 0 ${W} ${H}" id="heatSvg" role="img" aria-label="시도별 연도별 지출 비중 히트맵">${yl}${xl}${cells}</svg>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11.5px;color:var(--muted)">
+    <span>총지출 대비 비중(%) · 행 정렬: ${LAST.fy}년 비중순</span>
+    <span style="display:flex;align-items:center;gap:4px">0
+      ${ramp.map(r=>`<span style="width:14px;height:9px;border-radius:2px;background:var(${r})"></span>`).join("")}
+      ${F1(maxShare)}%</span>
+  </div>`;
+  document.getElementById("chHeat").innerHTML=svg;
+  document.getElementById("heatSvg").addEventListener("mousemove", ev=>{
+    const t=ev.target;
+    if(t.tagName!=="rect"){ hideTip(); return; }
+    const d=idx.get(t.dataset.s+"|"+t.dataset.y);
+    if(!d){ hideTip(); return; }
+    showTip(`<b>${t.dataset.s} · ${t.dataset.y}년</b>
+      <div class="row"><span>지출액</span><b>${F(d.ep/EOK)}억원</b></div>
+      <div class="row"><span>총지출 대비</span><b>${d.share.toFixed(3)}%</b></div>
+      <div class="row"><span>사업 건수</span><span>${F(d.n)}</span></div>`, ev);
+  });
+  document.getElementById("heatSvg").addEventListener("mouseleave", hideTip);
+})();
+
+/* ---------- sido bar (selected year) ---------- */
+function drawSido(year){
+  const rows = DATA.sido_year.filter(d=>d.fy===year).sort((a,b)=>b.ep-a.ep);
+  const barH=24, labW=54, valW=64, m={t:26,r:valW,b:8,l:labW};
+  const W=480, iw=W-m.l-m.r, H=m.t+rows.length*barH+m.b;
+  const vmax = Math.max(...rows.map(d=>d.ep))/EOK;
+  let g=`<text x="${m.l}" y="${m.t-8}" class="tick">지출액(억원) · ${year}년</text>`;
+  rows.forEach((d,i)=>{
+    const w = Math.max(2, d.ep/EOK/vmax*iw);
+    const yy = m.t+i*barH;
+    g+=`<text x="${m.l-8}" y="${yy+barH/2+4}" text-anchor="end" class="tick" fill="var(--ink2)">${d.sido}</text>
+        <rect x="${m.l}" y="${yy+4}" width="${w}" height="${barH-8}" rx="2" fill="var(--s1)" data-s="${d.sido}"/>
+        <text x="${m.l+w+6}" y="${yy+barH/2+4}" class="dlabel">${F(d.ep/EOK)}</text>`;
+  });
+  document.getElementById("chSido").innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" id="sidoSvg" role="img" aria-label="선택 연도 시도별 지출액">${g}</svg>`;
+  const idx=new Map(rows.map(d=>[d.sido,d]));
+  document.getElementById("sidoSvg").addEventListener("mousemove", ev=>{
+    const t=ev.target;
+    if(t.tagName!=="rect"){ hideTip(); return; }
+    const d=idx.get(t.dataset.s);
+    showTip(`<b>${d.sido} · ${year}년</b>
+      <div class="row"><span>지출액</span><b>${F(d.ep/EOK)}억원</b></div>
+      <div class="row"><span>총지출 대비</span><b>${d.share.toFixed(3)}%</b></div>
+      <div class="row"><span>사업 건수</span><span>${F(d.n)}</span></div>`, ev);
+  });
+  document.getElementById("sidoSvg").addEventListener("mouseleave", hideTip);
+}
+
+/* ---------- top programs ---------- */
+(function(){
+  const rows = DATA.top_biz.slice(0,15);
+  const barH=30, labW=340, valW=70, m={t:24,r:valW,b:6,l:labW};
+  const W=1000, iw=W-m.l-m.r, H=m.t+rows.length*barH+m.b;
+  const vmax = rows[0].ep/EOK;
+  let g=`<text x="${m.l}" y="${m.t-8}" class="tick">10년 누적 지출액(억원)</text>`;
+  rows.forEach((d,i)=>{
+    const w = Math.max(2, d.ep/EOK/vmax*iw);
+    const yy=m.t+i*barH;
+    const nm = d.nm.length>26 ? d.nm.slice(0,25)+"…" : d.nm;
+    g+=`<text x="${m.l-10}" y="${yy+barH/2+4}" text-anchor="end" class="dlabel" fill="var(--ink)">${nm}</text>
+        <rect x="${m.l}" y="${yy+6}" width="${w}" height="${barH-12}" rx="2" fill="var(--s1)" data-i="${i}"/>
+        <text x="${m.l+w+6}" y="${yy+barH/2+4}" class="dlabel">${F(d.ep/EOK)}</text>`;
+  });
+  document.getElementById("chTop").innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" id="topSvg" role="img" aria-label="누적 지출 상위 세부사업">${g}</svg>`;
+  document.getElementById("topSvg").addEventListener("mousemove", ev=>{
+    const t=ev.target;
+    if(t.tagName!=="rect"){ hideTip(); return; }
+    const d=rows[+t.dataset.i];
+    showTip(`<b>${d.nm}</b>
+      <div class="row"><span>누적 지출</span><b>${F(d.ep/EOK)}억원</b></div>
+      <div class="row"><span>단체-연도 건수</span><span>${F(d.n)}</span></div>
+      <div class="row"><span>시행 단체 수</span><span>${d.n_laf}</span></div>`, ev);
+  });
+  document.getElementById("topSvg").addEventListener("mouseleave", hideTip);
+})();
+
+/* ---------- year selector ---------- */
+const sel=document.getElementById("selYear");
+sel.innerHTML = YEARS.map(y=>`<option value="${y}" ${y===LAST.fy?"selected":""}>${y}</option>`).join("");
+sel.addEventListener("change", e=>drawSido(+e.target.value));
+drawSido(LAST.fy);
+
+</script>
+</body>
+</html>

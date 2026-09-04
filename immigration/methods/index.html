@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>자료 소개 · 지방재정 세부사업 데이터</title>
+<title>분류 방법과 검증 · 지방재정 세부사업 데이터</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
 <style>
 /* ══ tokens (alio-dashboard 아이덴티티) ══ */
@@ -145,79 +145,85 @@ table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid v
 <body>
 <header class="band">
 <div class="wrap">
-  <p class="sitename"><a href="./">지방재정 세부사업 데이터</a></p>
-  <h1>자료 소개</h1>
-  <nav class="nav"><a href="./" class=on>자료 소개</a><a href="data/">수집 과정</a><span class="grp">이민·다문화 재정</span><a href="immigration/">전체 요약</a><a href="immigration/regions/">시군구별</a><a href="immigration/methods/">방법·검증</a></nav>
+  <p class="sitename"><a href="../../">지방재정 세부사업 데이터</a></p>
+  <h1>분류 방법과 검증</h1>
+  <nav class="nav"><a href="../../">자료 소개</a><a href="../../data/">수집 과정</a><span class="grp">이민·다문화 재정</span><a href="../../immigration/">전체 요약</a><a href="../../immigration/regions/">시군구별</a><a href="../../immigration/methods/" class=on>방법·검증</a></nav>
 </div>
 </header>
 <div class="wrap" style="padding-top:6px">
 <section class="prose">
-  <p class="lede">행정안전부 <b>지방재정365</b>가 공개하는 「세부사업별 세출현황」을 전수 수집해 구축한 연구용 데이터베이스와,
-  그 위에서 진행하는 주제별 분석을 공개하는 사이트입니다. 243개 자치단체(광역 본청 포함)의 2016–2025년 세부사업 단위 지출을
-  하나의 패널로 묶었고, 첫 번째 주제로 <b>이민·다문화 관련 재정 지출</b>을 다룹니다.</p>
+  <p class="lede">이민·다문화 관련 사업을 73만 종의 사업명 가운데서 어떻게 골라내고, 어떻게 세 집단으로 나누며,
+  그 결과를 어떻게 검증하는지를 기록합니다. 규칙은 모두 결정론적이라 같은 데이터에서 같은 결과가 재현됩니다.</p>
 </section>
 
-<div class="kpis">
-  <div class="kpi"><div class="lab">관측 행</div><div class="val">4,296,988</div><div class="note">단체 × 연도 × 세부사업</div></div>
-  <div class="kpi"><div class="lab">자치단체 × 연도</div><div class="val">243 × 10</div><div class="note">2016–2025, 매년 전수</div></div>
-  <div class="kpi"><div class="lab">고유 세부사업코드</div><div class="val">1,011,358</div><div class="note">단체 내 사업 식별자</div></div>
-  <div class="kpi"><div class="lab">고유 사업명</div><div class="val">736,316</div><div class="note">공백·중점 정규화 후</div></div>
-</div>
+<section class="prose">
+  <h2>측정 정의</h2>
+  <p><b>"사업명에 이민·다문화·외국인 주민 대상이 명시된 세부사업"</b>의 지출을, 같은 세부사업코드의 전 기간으로 연결한 값입니다.
+  두 방향의 오차를 갖습니다: 통합형 기관(가족센터 등)은 내국인 가족 서비스 몫까지 포함되므로 <i>상한</i> 방향,
+  사업명에 대상이 드러나지 않는 예산은 포착하지 못하므로 <i>하한</i> 방향입니다.</p>
+</section>
+
+<section class="prose">
+  <h2>분류 절차</h2>
+  <ol class="steps">
+    <li><b>회수</b> — 사업명(공백·중점 제거)에 다음 키워드가 하나라도 있으면 후보로 회수합니다:
+      <span class="kw">다문화 · 외국인 · 이민 · 이주민 · 이주여성 · 이주배경 · 이주노동 · 귀화 · 고려인 · 중도입국 · 결혼이민 · 외국국적동포 · 계절근로 · 유학생 · 동포 · 사할린 · 영주귀국</span></li>
+    <li><b>배제(우선)</b> — 문자열 우연과 비이민 맥락을 먼저 걸러냅니다:
+      <span class="kw">고려인삼 · 안동포 · 영동포도 · 포도축제 · 손실보상 · 택지 · 농공단지 · 농산어촌(유학)</span></li>
+    <li><b>확정(core)</b> — 강한 표적 키워드(다문화, 이주민, 결혼이민, 귀화, 외국인주민·근로자·아동·유학생·쉼터·지원센터, 계절근로, 동포, 사할린 등)가 있으면 확정.</li>
+    <li><b>배제(후순위)</b> — 확정 키워드가 없고 <span class="kw">투자 · 관광 · 환자</span>가 있으면 배제(외국인투자 유치, 관광객·의료관광 유치).</li>
+    <li><b>보류(ambiguous)</b> — 회수됐지만 위 어느 쪽도 아닌 것. 대규모 언어모델 분류와 사람 검수 대상.</li>
+    <li><b>대상 집단 3분류</b> — 확정 사업을 <b>외국인노동</b>(외국인근로·노동, 계절근로, 이주노동) → <b>다문화가족·결혼이민</b>(다문화, 결혼이민, 이주여성, 중도입국) → <b>외국인주민 일반</b>(나머지: 유학생·동포·귀화·인식개선 등) 순서로 배정합니다.</li>
+    <li><b>사업코드 단위 연결</b> — 같은 세부사업코드는 같은 사업으로 봅니다. 어느 한 해의 명칭이라도 확정이면(배제와 충돌하지 않는 한) 그 코드의 전 기간을 편입하고, 3분류는 확정 연도 명칭의 최빈값을 따릅니다. 확정·배제가 충돌하는 코드(1건)는 보류로 돌립니다.</li>
+  </ol>
+</section>
 
 <section>
-  <h2>페이지 안내</h2>
-  <div class="grid2 cards">
-    <a class="card link" href="data/">
-      <div class="ttl">자료 수집·구축 과정</div>
-      <p>오픈API 명세, 수집 파이프라인, 검증 결과, 보유 필드와 사업코드 구조, 자료의 한계와 갱신 절차.</p>
-    </a>
-    <a class="card link" href="immigration/">
-      <div class="ttl">이민·다문화 재정 — 전체 요약</div>
-      <p>연도별 지출 추이, 재원 구성, 대상 집단별 구성, 시도별 분포, 대표 세부사업.</p>
-    </a>
-    <a class="card link" href="immigration/regions/">
-      <div class="ttl">이민·다문화 재정 — 시군구별</div>
-      <p>시도 → 시군구 드릴다운 지도, 단체별 요약 패널, 243개 단체 전체 테이블. 단체별 공유 주소 지원.</p>
-    </a>
-    <a class="card link" href="immigration/methods/">
-      <div class="ttl">분류 방법과 검증</div>
-      <p>키워드 사전, 배제 규칙, 대상 집단 3분류, 사업코드 단위 연결, 골드샘플 검증 설계, 코드·명칭 이력.</p>
-    </a>
+  <h2>규모</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="lab">회수된 사업코드</div><div class="val">7,711</div><div class="note">전체 1,011,358개의 0.76%</div></div>
+    <div class="kpi"><div class="lab">확정 (core)</div><div class="val">7,106</div><div class="note">10년 지출 4조 967억원</div></div>
+    <div class="kpi"><div class="lab">보류 (ambiguous)</div><div class="val">405</div><div class="note">1,122억원 · 모델 분류 대기</div></div>
+    <div class="kpi"><div class="lab">배제 (excluded)</div><div class="val">200</div><div class="note">6,115억원 · 투자·관광·우연</div></div>
   </div>
+  <p class="desc">코드 단위 연결로 편입된 몫은 2,880행·6,224억원입니다. 이 가운데 2023–2025년이 4,680억원으로, 다문화가족지원센터가 2021–22년에 전국적으로 「가족센터」로 개명되면서 명칭만으로는 놓치던 지출입니다. 즉 사업명 기준 집계는 2023년 이후를 인위적으로 낮게 보여 줍니다.</p>
 </section>
 
 <section class="prose">
-  <h2>주제별 분석</h2>
-  <table class="plain">
-    <thead><tr><th>주제</th><th>질문</th><th>상태</th></tr></thead>
-    <tbody>
-      <tr><td><a href="immigration/">이민·다문화 재정</a></td>
-          <td>지방정부는 이민·다문화·외국인 주민 관련 사업에 얼마나, 누구를 위해, 어떤 재원으로 지출하는가</td>
-          <td>규칙 분류 v3 · 검증 진행 중</td></tr>
-    </tbody>
-  </table>
-  <p class="muted">같은 데이터베이스 위에 다른 정책 영역의 주제가 순차적으로 추가됩니다. 주제마다 전체 요약 · 시군구별 · 방법 페이지가 같은 구조로 붙습니다.</p>
+  <h2>같은 코드, 다른 이름 · 다른 코드, 같은 이름</h2>
+  <p>확정 코드 7,106개 중 <b>2,144개(30.2%)가 관측 기간 중 이름을 바꿨고</b>, 이 코드들이 확정 지출의 68.5%를 차지합니다 — 큰 사업일수록 개명이 잦아, 코드 연결이 소수 사례 보정이 아니라 총량의 3분의 2를 좌우합니다.
+  반대로 같은 단체 안에서 같은 이름을 쓰는 코드가 둘 이상인 조합은 3.8%(366개)로, 대부분 회계 분리(기금·보조 표기)나 사업 재편입니다.
+  이름이 여러 단체에 공유되는 사업(895종)은 국비 매칭 표준사업의 흔적으로, 표준사업 대 자체 기획 사업을 가르는 지표로 쓸 수 있습니다.</p>
+  <p><a class="btn" href="codes/">코드·명칭 이력 검토 — 지출 상위 100개 사업 ›</a></p>
 </section>
 
 <section class="prose">
-  <h2>갱신 이력</h2>
+  <h2>자본지출 플래그</h2>
+  <p>사업명에 <span class="kw">건립 · 신축 · 증축 · 개축 · 리모델링 · 건축 · 조성</span>이 있으면 자본지출로 표시합니다(확정 사업 내 162종, 1,064억원). 센터 신축처럼 특정 연도에 몰리는 지출을 운영성 지출과 분리해 볼 수 있습니다. "설치·운영"처럼 통합된 명칭은 분리하지 못합니다.</p>
+</section>
+
+<section class="prose">
+  <h2>검증 설계</h2>
+  <ol class="steps">
+    <li><b>골드샘플</b> — 사업명 155종을 층화 추출(지출 상위 30종 전수 + 확정·보류·배제 및 3분류 층별 무작위, 난수 고정). 코더는 자동 분류 결과를 보지 않은 채 사업명과 보조 정보(예산 분류·규모·개설연도)만으로 코딩합니다.</li>
+    <li><b>규칙 대 사람</b> — 정확도와 Cohen's κ를 범주별로 계산하고 불일치 유형으로 사전을 보강합니다. 코더 2인 이상이면 코더 간 신뢰도도 보고합니다.</li>
+    <li><b>모델 분류</b> — 보류 405개 코드 전체와 확정·배제 표본을 언어모델(온도 0, 구조화 출력, 동일 보조 정보)로 분류하고 골드샘플 대비 F1과 반복 안정성을 측정합니다. 최종 판정은 조회표로 고정해 이후 실행은 모델 없이 재현됩니다.</li>
+    <li><b>민감도</b> — 사업명 기준(코드 연결 없음)과 코드 기준 두 버전을 병행 보고해 추세·순위의 강건성을 확인합니다.</li>
+  </ol>
+</section>
+
+<section class="prose">
+  <h2>사전 개정 이력</h2>
   <ul class="log">
-    <li><span class="d">2026-09-04</span> 분류 단위를 사업명에서 세부사업코드로 승격(개명 전후 연결). 코드·명칭 이력 검토 페이지 공개.</li>
-    <li><span class="d">2026-09-03</span> 분류 사전 v2(유학생·동포·사할린 편입, 문자열 우연·토지보상 배제), 자본지출 플래그, 골드샘플 검증 패키지.</li>
-    <li><span class="d">2026-09-02</span> 2016–2025 전수 수집·적재·검증 완료. 이민·다문화 대시보드 첫 공개.</li>
+    <li><span class="d">v3 · 2026-09-04</span> 분류 단위를 세부사업코드로 승격. 개명 전후 연결, 충돌 코드 보류.</li>
+    <li><span class="d">v2 · 2026-09-03</span> 유학생·동포·사할린·영주귀국 편입. 고려인삼·안동포·영동포도(문자열 우연), 손실보상·택지·농공단지의 "이주민"(토지보상), 농산어촌 유학 배제. 자본지출 플래그.</li>
+    <li><span class="d">v1 · 2026-09-02</span> 다문화·외국인·이민·이주민 등 초기 키워드와 투자·관광·환자 배제.</li>
   </ul>
-</section>
-
-<section class="prose">
-  <h2>출처와 이용</h2>
-  <p>원자료: 행정안전부 지방재정365 「세부사업별 세출현황」 오픈API (lofin365.go.kr). 이용조건은 출처표시 하에 상업적·비상업적 이용과 2차적 저작물 작성이 허용됩니다.
-  이 사이트의 집계·분류는 연구자의 가공물이며, 원자료의 오류나 사업명 해석의 한계를 포함할 수 있습니다.</p>
-  <p class="cite">인용: 강우창. 2026. 「지방재정365 세부사업 데이터: 이민·다문화 재정 지출」. https://woochangkang.github.io/lofin-immigration-dashboard/</p>
 </section>
 
 <footer>
   <p><b>출처</b> 행정안전부 지방재정365 「세부사업별 세출현황」 오픈API (lofin365.go.kr, 출처표시·자유이용). 2016–2025 회계연도, 12월 31일 집행 스냅샷, 243개 자치단체 전수. 수집·검증 2026-09-02.</p>
-  <p>본 사이트의 집계와 분류는 연구자의 가공물입니다 · <a href="data/">수집 과정</a> · <a href="immigration/methods/">분류 방법</a></p>
+  <p>본 사이트의 집계와 분류는 연구자의 가공물입니다 · <a href="../../data/">수집 과정</a> · <a href="../../immigration/methods/">분류 방법</a></p>
 </footer>
 </div>
 <div class="tooltip" id="tip"></div>

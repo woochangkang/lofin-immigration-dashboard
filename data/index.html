@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>자료 소개 · 지방재정 세부사업 데이터</title>
+<title>자료 수집·구축 과정 · 지방재정 세부사업 데이터</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
 <style>
 /* ══ tokens (alio-dashboard 아이덴티티) ══ */
@@ -145,79 +145,106 @@ table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid v
 <body>
 <header class="band">
 <div class="wrap">
-  <p class="sitename"><a href="./">지방재정 세부사업 데이터</a></p>
-  <h1>자료 소개</h1>
-  <nav class="nav"><a href="./" class=on>자료 소개</a><a href="data/">수집 과정</a><span class="grp">이민·다문화 재정</span><a href="immigration/">전체 요약</a><a href="immigration/regions/">시군구별</a><a href="immigration/methods/">방법·검증</a></nav>
+  <p class="sitename"><a href="../">지방재정 세부사업 데이터</a></p>
+  <h1>자료 수집·구축 과정</h1>
+  <nav class="nav"><a href="../">자료 소개</a><a href="../data/" class=on>수집 과정</a><span class="grp">이민·다문화 재정</span><a href="../immigration/">전체 요약</a><a href="../immigration/regions/">시군구별</a><a href="../immigration/methods/">방법·검증</a></nav>
 </div>
 </header>
 <div class="wrap" style="padding-top:6px">
 <section class="prose">
-  <p class="lede">행정안전부 <b>지방재정365</b>가 공개하는 「세부사업별 세출현황」을 전수 수집해 구축한 연구용 데이터베이스와,
-  그 위에서 진행하는 주제별 분석을 공개하는 사이트입니다. 243개 자치단체(광역 본청 포함)의 2016–2025년 세부사업 단위 지출을
-  하나의 패널로 묶었고, 첫 번째 주제로 <b>이민·다문화 관련 재정 지출</b>을 다룹니다.</p>
-</section>
-
-<div class="kpis">
-  <div class="kpi"><div class="lab">관측 행</div><div class="val">4,296,988</div><div class="note">단체 × 연도 × 세부사업</div></div>
-  <div class="kpi"><div class="lab">자치단체 × 연도</div><div class="val">243 × 10</div><div class="note">2016–2025, 매년 전수</div></div>
-  <div class="kpi"><div class="lab">고유 세부사업코드</div><div class="val">1,011,358</div><div class="note">단체 내 사업 식별자</div></div>
-  <div class="kpi"><div class="lab">고유 사업명</div><div class="val">736,316</div><div class="note">공백·중점 정규화 후</div></div>
-</div>
-
-<section>
-  <h2>페이지 안내</h2>
-  <div class="grid2 cards">
-    <a class="card link" href="data/">
-      <div class="ttl">자료 수집·구축 과정</div>
-      <p>오픈API 명세, 수집 파이프라인, 검증 결과, 보유 필드와 사업코드 구조, 자료의 한계와 갱신 절차.</p>
-    </a>
-    <a class="card link" href="immigration/">
-      <div class="ttl">이민·다문화 재정 — 전체 요약</div>
-      <p>연도별 지출 추이, 재원 구성, 대상 집단별 구성, 시도별 분포, 대표 세부사업.</p>
-    </a>
-    <a class="card link" href="immigration/regions/">
-      <div class="ttl">이민·다문화 재정 — 시군구별</div>
-      <p>시도 → 시군구 드릴다운 지도, 단체별 요약 패널, 243개 단체 전체 테이블. 단체별 공유 주소 지원.</p>
-    </a>
-    <a class="card link" href="immigration/methods/">
-      <div class="ttl">분류 방법과 검증</div>
-      <p>키워드 사전, 배제 규칙, 대상 집단 3분류, 사업코드 단위 연결, 골드샘플 검증 설계, 코드·명칭 이력.</p>
-    </a>
-  </div>
+  <p class="lede">이 페이지는 데이터베이스가 어떻게 만들어졌는지를 재현 가능한 수준으로 기록합니다.
+  모든 수치는 수집·검증 시점(2026-09-02)의 실측값입니다.</p>
 </section>
 
 <section class="prose">
-  <h2>주제별 분석</h2>
+  <h2>1. 출처와 접근 경로</h2>
+  <p>원자료는 지방재정365 오픈API의 <b>세부사업별 세출현황</b>(요청주소 <code>lofin365.go.kr/lf/hub/QWGJK</code>)입니다.
+  공공데이터포털에도 같은 항목이 등록돼 있지만 API 유형이 <i>LINK</i>여서 포털 인증키로는 호출할 수 없고,
+  지방재정365 회원가입 후 발급받는 자체 인증키를 씁니다.</p>
   <table class="plain">
-    <thead><tr><th>주제</th><th>질문</th><th>상태</th></tr></thead>
+    <thead><tr><th>항목</th><th>내용</th></tr></thead>
     <tbody>
-      <tr><td><a href="immigration/">이민·다문화 재정</a></td>
-          <td>지방정부는 이민·다문화·외국인 주민 관련 사업에 얼마나, 누구를 위해, 어떤 재원으로 지출하는가</td>
-          <td>규칙 분류 v3 · 검증 진행 중</td></tr>
+      <tr><td>필수 인자</td><td><code>fyr</code>(회계연도), <code>exe_ymd</code>(집행일자) — 연말 확정치는 <code>YYYY1231</code></td></tr>
+      <tr><td>선택 인자</td><td><code>laf_cd</code>(자치단체코드), <code>wa_laf_cd</code>(지역코드), <code>dbiz_nm</code>(세부사업명)</td></tr>
+      <tr><td>페이지 크기</td><td>최대 1,000행 (초과 요청 시 ERROR-336)</td></tr>
+      <tr><td>요청 제한</td><td>명세상 "제한 없음"</td></tr>
+      <tr><td>보유 연도</td><td>2016 회계연도부터 (명세 기준). 본 DB는 2016–2025</td></tr>
+      <tr><td>단체 명부</td><td>연도별 자치단체 목록은 세출예산 API(<code>ACEXBG</code>)에서 추출 — 그 해에 존재한 단체 기준</td></tr>
     </tbody>
   </table>
-  <p class="muted">같은 데이터베이스 위에 다른 정책 영역의 주제가 순차적으로 추가됩니다. 주제마다 전체 요약 · 시군구별 · 방법 페이지가 같은 구조로 붙습니다.</p>
 </section>
 
 <section class="prose">
-  <h2>갱신 이력</h2>
-  <ul class="log">
-    <li><span class="d">2026-09-04</span> 분류 단위를 사업명에서 세부사업코드로 승격(개명 전후 연결). 코드·명칭 이력 검토 페이지 공개.</li>
-    <li><span class="d">2026-09-03</span> 분류 사전 v2(유학생·동포·사할린 편입, 문자열 우연·토지보상 배제), 자본지출 플래그, 골드샘플 검증 패키지.</li>
-    <li><span class="d">2026-09-02</span> 2016–2025 전수 수집·적재·검증 완료. 이민·다문화 대시보드 첫 공개.</li>
+  <h2>2. 수집 파이프라인</h2>
+  <ol class="steps">
+    <li><b>01 수집</b> — 연도 × 단체 × 페이지 루프. 응답 원문(JSON)을 그대로 저장하고, 파일마다 SHA-256·행수·totalCount를 매니페스트에 기록. 단체 단위 완료 마커로 중단 후 재개 가능. 결과: 5,563개 파일, 원본 2.2 GB.</li>
+    <li><b>02 적재</b> — 원본을 연도별 Parquet(zstd)로 변환한 뒤 DuckDB 테이블 <code>settle_dtl</code>로 통합. 금액은 원 단위 정수, 코드는 문자열로 고정.</li>
+    <li><b>04 검증</b> — 단체·연도 2,430건 각각에 대해 <i>API totalCount = 매니페스트 행수 = DB 행수</i> 3자 대조. 불일치 0건.</li>
+    <li><b>05 주제 분류</b> — 사업명 키워드 규칙과 사업코드 단위 연결로 주제별 사업 집합 구성(<a href="../immigration/methods/">방법 페이지</a>).</li>
+    <li><b>06–08 산출</b> — 경계 데이터 투영, 코드·명칭 매핑, 이 사이트 빌드. 원본은 수정하지 않으며 모든 변환은 스크립트로만 수행합니다.</li>
+  </ol>
+</section>
+
+<section class="prose">
+  <h2>3. 검증 결과</h2>
+  <div class="tbl-wrap static"><table>
+    <thead><tr><th>회계연도</th><th>단체 수</th><th>행수</th><th>지출액 합(조원)</th><th>예산현액 합(조원)</th></tr></thead>
+    <tbody>
+      <tr><td>2016</td><td>243</td><td>331,606</td><td>254.0</td><td>305.9</td></tr>
+      <tr><td>2017</td><td>243</td><td>368,614</td><td>275.0</td><td>339.3</td></tr>
+      <tr><td>2018</td><td>243</td><td>387,838</td><td>290.4</td><td>362.7</td></tr>
+      <tr><td>2019</td><td>243</td><td>417,079</td><td>340.9</td><td>415.5</td></tr>
+      <tr><td>2020</td><td>243</td><td>443,833</td><td>420.0</td><td>487.5</td></tr>
+      <tr><td>2021</td><td>243</td><td>452,288</td><td>436.0</td><td>513.2</td></tr>
+      <tr><td>2022</td><td>243</td><td>465,627</td><td>455.4</td><td>555.5</td></tr>
+      <tr><td>2023</td><td>243</td><td>478,199</td><td>452.5</td><td>548.6</td></tr>
+      <tr><td>2024</td><td>243</td><td>472,221</td><td>467.5</td><td>556.1</td></tr>
+      <tr><td>2025</td><td>243</td><td>479,683</td><td>524.6</td><td>601.3</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">지출액 합계가 지방재정 총규모의 연도별 추세와 부합하는지를 외부 정합성의 1차 점검으로 삼았습니다. 회계 간 전출입 등으로 공식 통계와 정의가 다를 수 있습니다.</p>
+</section>
+
+<section class="prose">
+  <h2>4. 보유 필드</h2>
+  <table class="plain">
+    <thead><tr><th>구분</th><th>필드</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>식별</td><td>회계연도, 지역(시도)코드·명, 자치단체코드·명, 행정자치단체코드</td><td>본청과 시군구는 별도 단체</td></tr>
+      <tr><td>사업</td><td>세부사업코드(16자리), 세부사업명, 부서코드</td><td>부서명·상위(정책·단위)사업·사업설명은 제공되지 않음</td></tr>
+      <tr><td>기능 분류</td><td>분야(17종) · 부문(57종) 코드·명</td><td>예산 편성 체계상 위치</td></tr>
+      <tr><td>회계·재원</td><td>회계구분(일반·특별·기금), 국비·시도비·시군구비·기타</td><td>재량 지출(자체재원) 분리 가능</td></tr>
+      <tr><td>금액</td><td>예산현액, 편성액, 지출액 (원)</td><td>집행률 = 지출액 / 예산현액</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="prose">
+  <h2>5. 세부사업코드의 구조</h2>
+  <p>16자리 코드 101만 개를 전수 검증한 결과, <b>행정자치단체코드(7) + 사업 개설연도(4) + 일련번호(5)</b>로 구성됩니다.
+  앞 7자리는 행정자치단체코드와 95.9% 일치하고, 8~11자리는 100%가 연도 형식이며 100%가 해당 사업의 최초 관측 연도보다 이르거나 같습니다(2016년 이후 개설 사업은 67.7%가 정확히 일치 — 나머지는 관측 시작 전 개설).
+  따라서 <b>사업 신설 시점을 코드만으로 추적</b>할 수 있습니다. 뒷 5자리는 위계 정보가 없는 일련번호입니다.</p>
+  <p>같은 코드는 같은 사업으로 취급합니다. 사업명이 연도에 따라 바뀌어도(약 19%의 코드가 관측 기간 중 개명) 코드로 연결하며, 2023년 군위군의 대구 편입처럼 자치단체가 바뀐 경우에도 코드가 유지되어 시계열이 끊기지 않습니다.</p>
+</section>
+
+<section class="prose">
+  <h2>6. 한계</h2>
+  <ul>
+    <li><b>스냅샷 자료</b>: 12월 31일 기준 집행 현황이며 출납폐쇄기간 정리분이 반영된 값입니다. 공식 결산서 수치와 미세하게 다를 수 있습니다.</li>
+    <li><b>세부사업이 최소 단위</b>: 사업 내부의 비목(운영비·시설비 등)은 보이지 않습니다. 건립·리모델링은 대개 별도 세부사업으로 편성되므로 이름으로 식별합니다.</li>
+    <li><b>보조금 흐름</b>: 광역이 기초에 보조하면 양쪽 모두 지출로 기록될 수 있어, 시도 합계에는 이중 계상 가능성이 있습니다. 단체 수준 분석에는 영향이 없습니다.</li>
+    <li><b>경계 데이터</b>: 지도는 KOSTAT 2013 경계를 쓰며 청원군→청주시 통합, 인천 남구→미추홀구 개칭, 군위군 편입을 연도별로 처리했습니다.</li>
   </ul>
 </section>
 
 <section class="prose">
-  <h2>출처와 이용</h2>
-  <p>원자료: 행정안전부 지방재정365 「세부사업별 세출현황」 오픈API (lofin365.go.kr). 이용조건은 출처표시 하에 상업적·비상업적 이용과 2차적 저작물 작성이 허용됩니다.
-  이 사이트의 집계·분류는 연구자의 가공물이며, 원자료의 오류나 사업명 해석의 한계를 포함할 수 있습니다.</p>
-  <p class="cite">인용: 강우창. 2026. 「지방재정365 세부사업 데이터: 이민·다문화 재정 지출」. https://woochangkang.github.io/lofin-immigration-dashboard/</p>
+  <h2>7. 갱신</h2>
+  <p>결산이 확정되는 매년 하반기에 새 회계연도 하나를 추가합니다. 수집 스크립트는 연도 인자만 받으므로 한 연도 수집 → 적재 → 검증 → 주제 분류 재실행 → 사이트 재빌드 순서로 끝납니다. 모든 스크립트와 분류 사전은 로컬 연구 저장소에서 버전 관리하며, 이 사이트는 산출물만 담습니다.</p>
 </section>
 
 <footer>
   <p><b>출처</b> 행정안전부 지방재정365 「세부사업별 세출현황」 오픈API (lofin365.go.kr, 출처표시·자유이용). 2016–2025 회계연도, 12월 31일 집행 스냅샷, 243개 자치단체 전수. 수집·검증 2026-09-02.</p>
-  <p>본 사이트의 집계와 분류는 연구자의 가공물입니다 · <a href="data/">수집 과정</a> · <a href="immigration/methods/">분류 방법</a></p>
+  <p>본 사이트의 집계와 분류는 연구자의 가공물입니다 · <a href="../data/">수집 과정</a> · <a href="../immigration/methods/">분류 방법</a></p>
 </footer>
 </div>
 <div class="tooltip" id="tip"></div>
