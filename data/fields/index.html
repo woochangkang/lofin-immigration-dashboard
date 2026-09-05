@@ -118,6 +118,12 @@ footer p{margin:4px 0}
 .sitename{font-size:12.5px;letter-spacing:.04em;color:var(--ink2);margin:0 0 2px}
 .sitename a{color:inherit;text-decoration:none}
 .prose{max-width:76ch}
+/* 문서형 페이지 — 컨테이너를 읽기 너비로 좁혀 본문·표·지표가 저절로 같은 선에 맞는다 */
+.wrap.doc{max-width:860px}
+.wrap.doc .prose,.wrap.doc .desc,.wrap.doc footer{max-width:none}
+/* 좁아진 폭에서도 지표 4개가 한 줄에 들어가도록 */
+.wrap.doc .kpis{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}
+.wrap.doc .kpi .val{font-size:20px}
 .prose p{margin:0 0 12px}
 .prose ul{padding-left:20px}
 .lede{font-size:15.5px;color:var(--ink2)}
@@ -145,13 +151,13 @@ table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid v
 </head>
 <body>
 <header class="band">
-<div class="wrap">
+<div class="wrap doc">
   <p class="sitename"><a href="../../">지방재정 세부사업 데이터</a></p>
   <h1>원자료 한 행 읽기 — 27개 필드</h1>
   <nav class="nav"><a href="../../">자료 소개</a><a href="../../data/">수집 과정</a><a href="../../data/fields/" class=on>필드 사전</a><a href="../../data/departments/">부서·위계</a><a class="grp" href="../../immigration/" title="주제: 이민·다문화 재정">이민·다문화 재정 ›</a><a href="../../immigration/">전체 요약</a><a href="../../immigration/regions/">시군구별</a><a href="../../immigration/methods/">방법·검증</a></nav>
 </div>
 </header>
-<div class="wrap" style="padding-top:6px">
+<div class="wrap doc" style="padding-top:6px">
 <section class="prose">
   <p class="lede">이 사이트의 모든 수치는 지방재정365 오픈API의 <b>세부사업별 세출현황</b>(<code>QWGJK</code>) 한 종에서
   나옵니다. 한 행이 <b>27개 필드</b>로 되어 있는데, 우리가 실제로 쓰는 것은 절반이 되지 않습니다.
@@ -163,7 +169,7 @@ table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid v
   <h2>한 행은 이렇게 생겼습니다</h2>
   <p class="desc">서울본청 2025년 실제 레코드 하나. 국비와 시도비가 함께 잡히는 큰 사업을 골랐습니다.</p>
   <div class="tbl-wrap static"><table id="fldExample" class="plain">
-    <thead><tr><th style="width:16%">필드</th><th style="width:26%">값</th><th>무엇인가</th></tr></thead><tbody></tbody>
+    <thead><tr><th style="width:15%">필드</th><th style="width:19%">값</th><th>무엇인가</th></tr></thead><tbody></tbody>
   </table></div>
   <p class="desc">27개 중 <b>25개가 API가 주는 값</b>이고, <code>fy</code>와 <code>source_file</code> 두 개는
   적재할 때 우리가 붙였습니다. <code>fy</code>는 <code>fyr</code>를 정수로 바꾼 사본이고(4,296,988행 전부 일치),

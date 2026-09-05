@@ -118,6 +118,12 @@ footer p{margin:4px 0}
 .sitename{font-size:12.5px;letter-spacing:.04em;color:var(--ink2);margin:0 0 2px}
 .sitename a{color:inherit;text-decoration:none}
 .prose{max-width:76ch}
+/* 문서형 페이지 — 컨테이너를 읽기 너비로 좁혀 본문·표·지표가 저절로 같은 선에 맞는다 */
+.wrap.doc{max-width:860px}
+.wrap.doc .prose,.wrap.doc .desc,.wrap.doc footer{max-width:none}
+/* 좁아진 폭에서도 지표 4개가 한 줄에 들어가도록 */
+.wrap.doc .kpis{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}
+.wrap.doc .kpi .val{font-size:20px}
 .prose p{margin:0 0 12px}
 .prose ul{padding-left:20px}
 .lede{font-size:15.5px;color:var(--ink2)}
@@ -145,13 +151,13 @@ table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid v
 </head>
 <body>
 <header class="band">
-<div class="wrap">
+<div class="wrap doc">
   <p class="sitename"><a href="../">지방재정 세부사업 데이터</a></p>
   <h1>자료 수집·구축 과정</h1>
   <nav class="nav"><a href="../">자료 소개</a><a href="../data/" class=on>수집 과정</a><a href="../data/fields/">필드 사전</a><a href="../data/departments/">부서·위계</a><a class="grp" href="../immigration/" title="주제: 이민·다문화 재정">이민·다문화 재정 ›</a><a href="../immigration/">전체 요약</a><a href="../immigration/regions/">시군구별</a><a href="../immigration/methods/">방법·검증</a></nav>
 </div>
 </header>
-<div class="wrap" style="padding-top:6px">
+<div class="wrap doc" style="padding-top:6px">
 <section class="prose">
   <p class="lede">이 페이지는 데이터베이스가 어떻게 만들어졌는지를 재현 가능한 수준으로 기록합니다.
   모든 수치는 수집·검증 시점(2026-09-02)의 실측값입니다.</p>

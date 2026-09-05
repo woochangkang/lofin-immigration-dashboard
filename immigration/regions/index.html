@@ -118,6 +118,12 @@ footer p{margin:4px 0}
 .sitename{font-size:12.5px;letter-spacing:.04em;color:var(--ink2);margin:0 0 2px}
 .sitename a{color:inherit;text-decoration:none}
 .prose{max-width:76ch}
+/* 문서형 페이지 — 컨테이너를 읽기 너비로 좁혀 본문·표·지표가 저절로 같은 선에 맞는다 */
+.wrap.doc{max-width:860px}
+.wrap.doc .prose,.wrap.doc .desc,.wrap.doc footer{max-width:none}
+/* 좁아진 폭에서도 지표 4개가 한 줄에 들어가도록 */
+.wrap.doc .kpis{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}
+.wrap.doc .kpi .val{font-size:20px}
 .prose p{margin:0 0 12px}
 .prose ul{padding-left:20px}
 .lede{font-size:15.5px;color:var(--ink2)}
