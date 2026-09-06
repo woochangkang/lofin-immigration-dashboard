@@ -167,9 +167,12 @@ table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid v
 <div class="kpis">
   <div class="kpi"><div class="lab">관측 행</div><div class="val">4,296,988</div><div class="note">단체 × 연도 × 세부사업</div></div>
   <div class="kpi"><div class="lab">자치단체 × 연도</div><div class="val">243 × 10</div><div class="note">2016–2025, 매년 전수</div></div>
-  <div class="kpi"><div class="lab">고유 세부사업코드</div><div class="val">1,011,358</div><div class="note">단체 내 사업 식별자</div></div>
+  <div class="kpi"><div class="lab">고유 세부사업코드</div><div class="val">1,011,358</div><div class="note">단체 × 사업 인스턴스</div></div>
   <div class="kpi"><div class="lab">고유 사업명</div><div class="val">736,316</div><div class="note">공백·중점 정규화 후</div></div>
 </div>
+<p class="muted" style="margin-top:10px">코드 백만은 <b>사업의 가짓수가 아닙니다.</b> 세부사업코드는 앞머리에 기관코드를 품고 있어
+같은 사업이라도 단체가 다르면 코드가 다릅니다(<code>기초연금 지급</code>은 96개 단체에서 98개 코드).
+그래서 <b>단체 간 비교는 코드로 할 수 없습니다</b> — <a href="data/fields/">무엇으로 비교할 수 있는지</a>.</p>
 
 <section>
   <h2>페이지 안내</h2>
