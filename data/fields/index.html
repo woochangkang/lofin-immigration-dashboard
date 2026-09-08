@@ -140,6 +140,13 @@ table.plain{border-collapse:collapse;width:100%;font-size:13.5px;margin:6px 0 10
 table.plain th,table.plain td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--grid);vertical-align:top;white-space:normal;font-family:inherit}
 table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid var(--axis)}
 .tbl-wrap.static{max-height:none}
+/* 그림 규약: 제목=한 문장 주장 · 부제=측정 정의 · 출처줄 */
+.fig{margin:0}
+.fig-title{font-size:17.5px;margin:0 0 3px}
+.fig-sub{color:var(--ink2);font-size:13px;margin:0 0 10px;max-width:80ch}
+.fig-src{color:var(--muted);font-size:12px;margin:8px 0 0}
+.tblview{margin:8px 0 14px;font-size:13px}
+.tblview summary{color:var(--ink2);cursor:pointer}
 .cards .card.link{display:block;text-decoration:none;color:inherit}
 .cards .card.link:hover{border-color:var(--accent)}
 .cards .ttl{font-family:"Gowun Batang",serif;font-weight:700;font-size:16px;margin-bottom:4px;color:var(--accent-ink)}
@@ -154,7 +161,7 @@ table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid v
 <div class="wrap doc">
   <p class="sitename"><a href="../../">지방재정 세부사업 데이터</a></p>
   <h1>원자료 한 행 읽기 — 27개 필드</h1>
-  <nav class="nav"><a href="../../">자료 소개</a><a href="../../data/">수집 과정</a><a href="../../data/fields/" class=on>필드 사전</a><a href="../../data/departments/">부서·위계</a><a class="grp" href="../../immigration/" title="주제: 이민·다문화 재정">이민·다문화 재정 ›</a><a href="../../immigration/">전체 요약</a><a href="../../immigration/regions/">시군구별</a><a href="../../immigration/methods/">방법·검증</a></nav>
+  <nav class="nav"><a href="../../">자료 소개</a><a href="../../data/">수집 과정</a><a href="../../data/fields/" class=on>필드 사전</a><a href="../../data/classification/">분류 계획</a><a href="../../data/departments/">부서·위계</a><a class="grp" href="../../immigration/" title="주제: 이민·다문화 재정">이민·다문화 재정 ›</a><a href="../../immigration/">전체 요약</a><a href="../../immigration/regions/">시군구별</a><a href="../../immigration/methods/">방법·검증</a></nav>
 </div>
 </header>
 <div class="wrap doc" style="padding-top:6px">
@@ -319,7 +326,7 @@ table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid v
     <li><b>주제별 사전 구축</b> — 사업명 규칙으로 대상을 추려 코드로 승격시키는 방식. 이 사이트가
       <a href="../../immigration/methods/">이민·다문화 사업</a>에 대해 한 작업이 그것입니다. 정확하지만 주제마다 새로 해야 합니다.</li>
     <li><b>없는 것: 전국 표준 사업명 목록</b> — 위 제6조가 사업명 설정을 단체에 맡기므로, 이런 목록은 존재하지 않습니다.
-      만들려면 연구자가 만들어야 합니다.</li>
+      만들려면 연구자가 만들어야 합니다. 그 계획은 <a href="../../data/classification/">분류 계획</a>에 있습니다.</li>
   </ol>
 </section>
 
@@ -385,8 +392,8 @@ const FP = {
    "null_pct": 0.0,
    "examples": [
     "2016",
-    "2018",
-    "2021"
+    "2021",
+    "2025"
    ]
   },
   {
@@ -395,9 +402,9 @@ const FP = {
    "distinct": 10,
    "null_pct": 0.0,
    "examples": [
+    "2016",
     "2019",
-    "2021",
-    "2017"
+    "2021"
    ]
   },
   {
@@ -407,8 +414,8 @@ const FP = {
    "null_pct": 0.0,
    "examples": [
     "4600000",
-    "4500000",
-    "3200000"
+    "4400000",
+    "2700000"
    ]
   },
   {
@@ -417,9 +424,9 @@ const FP = {
    "distinct": 17,
    "null_pct": 0.0,
    "examples": [
-    "충남",
-    "광주",
-    "울산"
+    "경북",
+    "울산",
+    "경기"
    ]
   },
   {
@@ -428,9 +435,9 @@ const FP = {
    "distinct": 244,
    "null_pct": 0.0,
    "examples": [
-    "1123000",
-    "2872000",
-    "2911000"
+    "4175000",
+    "4275000",
+    "4411000"
    ]
   },
   {
@@ -439,9 +446,9 @@ const FP = {
    "distinct": 245,
    "null_pct": 0.0,
    "examples": [
-    "대전서구",
-    "대전대덕구",
-    "강원강릉시"
+    "서울영등포구",
+    "서울동작구",
+    "부산기장군"
    ]
   },
   {
@@ -450,9 +457,9 @@ const FP = {
    "distinct": 146,
    "null_pct": 0.0,
    "examples": [
-    "430",
-    "217",
-    "265"
+    "205",
+    "406",
+    "445"
    ]
   },
   {
@@ -461,9 +468,9 @@ const FP = {
    "distinct": 1893,
    "null_pct": 0.0,
    "examples": [
-    "의료급여기금운영",
-    "도시교통사업특별회계",
-    "문화예술진흥기금"
+    "농업발전기금특별회계",
+    "중소기업육성기금운영특별회계",
+    "공무원아파트특별회계"
    ]
   },
   {
@@ -472,9 +479,9 @@ const FP = {
    "distinct": 3965,
    "null_pct": 0.0,
    "examples": [
-    "1088001",
-    "1067030",
-    "1043043"
+    "1030020",
+    "1015030",
+    "2102002"
    ]
   },
   {
@@ -494,9 +501,9 @@ const FP = {
    "distinct": 836682,
    "null_pct": 0.0,
    "examples": [
-    "자동차전용도로 도로관리 위탁",
-    "혼잡통행료 징수 위탁관리",
-    "수도권교통본부 조합 분담금 지원"
+    "행정 정보화 시스템 안정 운영",
+    "심뇌혈관 질환 예방관리",
+    "사회복귀시설(보조)"
    ]
   },
   {
@@ -507,7 +514,7 @@ const FP = {
    "examples": [
     "20161231",
     "20201231",
-    "20191231"
+    "20181231"
    ]
   },
   {
@@ -516,9 +523,9 @@ const FP = {
    "distinct": 921659,
    "null_pct": 0.0,
    "examples": [
-    "4040000000",
-    "12820000",
-    "41500000"
+    "18970000000",
+    "377412000",
+    "1434750000"
    ]
   },
   {
@@ -527,9 +534,9 @@ const FP = {
    "distinct": 320983,
    "null_pct": 0.0,
    "examples": [
-    "0",
-    "78751000",
-    "75000000"
+    "109750000",
+    "2257233000",
+    "3050654000"
    ]
   },
   {
@@ -538,9 +545,9 @@ const FP = {
    "distinct": 399392,
    "null_pct": 0.0,
    "examples": [
-    "7541000000",
-    "15145800850",
-    "9061938000"
+    "372400000",
+    "116856000",
+    "8692000"
    ]
   },
   {
@@ -549,9 +556,9 @@ const FP = {
    "distinct": 709134,
    "null_pct": 0.0,
    "examples": [
-    "720425000",
-    "2383300000",
-    "9320000"
+    "1564000000",
+    "121000000",
+    "12544000"
    ]
   },
   {
@@ -560,9 +567,9 @@ const FP = {
    "distinct": 16695,
    "null_pct": 0.0,
    "examples": [
-    "0",
-    "5950000",
-    "2266250210"
+    "48417000",
+    "74533000",
+    "60960000"
    ]
   },
   {
@@ -571,9 +578,9 @@ const FP = {
    "distinct": 2393790,
    "null_pct": 0.0,
    "examples": [
-    "308105380",
-    "9055794000",
-    "0"
+    "14199850",
+    "32000000",
+    "1245664660"
    ]
   },
   {
@@ -582,9 +589,9 @@ const FP = {
    "distinct": 739457,
    "null_pct": 0.0,
    "examples": [
-    "9061938000",
-    "821300000",
-    "5636500000"
+    "11800000",
+    "204000000",
+    "1250000000"
    ]
   },
   {
@@ -593,9 +600,9 @@ const FP = {
    "distinct": 14,
    "null_pct": 0.0,
    "examples": [
-    "070",
-    "060",
-    "120"
+    "120",
+    "150",
+    "020"
    ]
   },
   {
@@ -604,9 +611,9 @@ const FP = {
    "distinct": 17,
    "null_pct": 0.0,
    "examples": [
-    "국토및지역개발",
-    "산업ㆍ중소기업및에너지",
-    "공공질서및안전"
+    "보건",
+    "공공질서및안전",
+    "과학기술"
    ]
   },
   {
@@ -615,9 +622,9 @@ const FP = {
    "distinct": 67,
    "null_pct": 0.0,
    "examples": [
-    "901",
-    "126",
-    "086"
+    "102",
+    "08D",
+    "115"
    ]
   },
   {
@@ -626,9 +633,9 @@ const FP = {
    "distinct": 57,
    "null_pct": 0.0,
    "examples": [
+    "도로",
     "지역및도시",
-    "산업금융지원",
-    "산업기술지원"
+    "산업금융지원"
    ]
   },
   {
@@ -637,9 +644,9 @@ const FP = {
    "distinct": 279,
    "null_pct": 0.0,
    "examples": [
-    "4060000",
-    "4070000",
-    "5080000"
+    "5080000",
+    "5400000",
+    "5410000"
    ]
   },
   {
@@ -648,9 +655,9 @@ const FP = {
    "distinct": 244,
    "null_pct": 0.0,
    "examples": [
-    "31522",
-    "31515",
-    "41610"
+    "62501",
+    "62604",
+    "71605"
    ]
   },
   {
@@ -659,9 +666,9 @@ const FP = {
    "distinct": 17,
    "null_pct": 0.0,
    "examples": [
-    "47",
+    "27",
     "26",
-    "27"
+    "47"
    ]
   },
   {
@@ -670,9 +677,9 @@ const FP = {
    "distinct": 5553,
    "null_pct": 0.0,
    "examples": [
-    "raw/settle_dtl/fy=2017/laf=1111000/page_0001.json",
-    "raw/settle_dtl/fy=2017/laf=1119000/page_0001.json",
-    "raw/settle_dtl/fy=2017/laf=1134000/page_0001.json"
+    "raw/settle_dtl/fy=2018/laf=4872000/page_0001.json",
+    "raw/settle_dtl/fy=2019/laf=4415000/page_0003.json",
+    "raw/settle_dtl/fy=2019/laf=4572000/page_0001.json"
    ]
   }
  ],
@@ -744,52 +751,52 @@ const FP = {
     "b": "행정도시예정지역 이주민생활안정기금"
    },
    {
-    "cd": "211",
+    "cd": "413",
     "n": 94,
-    "a": "건축안전특별회계",
-    "b": "횡성군수질개선특별회계"
+    "a": "강릉시옥외광고발전기금",
+    "b": "화장장주변지역 주민지원기금"
    }
   ],
   "fld": [
+   {
+    "cd": "110",
+    "nms": "산업ㆍ중소기업 / 산업ㆍ중소기업및에너지"
+   },
    {
     "cd": "120",
     "nms": "교통및물류 / 수송및교통"
    },
    {
     "cd": "070",
-    "nms": "환경 / 환경보호"
-   },
-   {
-    "cd": "110",
-    "nms": "산업ㆍ중소기업 / 산업ㆍ중소기업및에너지"
+    "nms": "환경보호 / 환경"
    }
   ],
   "part": [
    {
-    "nm": "일반행정",
-    "cds": "016, 16"
+    "nm": "재정ㆍ금융",
+    "cds": "014, 14"
    },
    {
-    "nm": "보육ㆍ가족및여성",
-    "cds": "84, 084"
+    "nm": "문화예술",
+    "cds": "61, 061"
+   },
+   {
+    "nm": "지방행정ㆍ재정지원",
+    "cds": "13, 013"
    },
    {
     "nm": "노인ㆍ청소년",
-    "cds": "85, 085"
+    "cds": "085, 85"
    },
    {
     "nm": "노동",
-    "cds": "86, 086"
-   },
-   {
-    "nm": "상하수도ㆍ수질",
-    "cds": "71, 071"
+    "cds": "086, 86"
    }
   ],
   "laf": [
    {
     "cd": "2813000",
-    "nms": "인천남구 / 인천미추홀구"
+    "nms": "인천미추홀구 / 인천남구"
    }
   ],
   "n_acnt_cd": 146,
@@ -1000,6 +1007,62 @@ const FP = {
    "cd": 171
   }
  ],
+ "concentration": [
+  {
+   "k": 100,
+   "pct": 39.4
+  },
+  {
+   "k": 500,
+   "pct": 56.3
+  },
+  {
+   "k": 1000,
+   "pct": 63.1
+  },
+  {
+   "k": 2000,
+   "pct": 69.5
+  },
+  {
+   "k": 5000,
+   "pct": 77.6
+  },
+  {
+   "k": 10000,
+   "pct": 83.6
+  },
+  {
+   "k": 20000,
+   "pct": 89.2
+  },
+  {
+   "k": 50000,
+   "pct": 95.4
+  },
+  {
+   "k": 100000,
+   "pct": 98.5
+  },
+  {
+   "k": 200000,
+   "pct": 99.9
+  },
+  {
+   "k": 279706,
+   "pct": 100.0
+  }
+ ],
+ "tiers": {
+  "llm": {
+   "names": 268511,
+   "pct": 82.6
+  },
+  "rule": {
+   "names": 11195,
+   "pct": 17.4
+  }
+ },
  "exe_ymd_note": "수집 시 exe_ymd=YYYY1231 만 호출했다(연말 확정 스냅샷)."
 };
 const F = n => n.toLocaleString("ko-KR");
