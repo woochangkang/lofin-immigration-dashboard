@@ -257,6 +257,26 @@ table.plain thead th{color:var(--ink2);font-weight:500;border-bottom:1px solid v
   <b>사업명에는 전국 표준이 없습니다.</b> 각 단체가 자기 조직의 성과목표에 맞춰 이름을 짓습니다.
   세부사업코드가 단체 안에서만 의미를 갖는 것과 같은 이유입니다.</p>
 
+  <h3 id="annex9">법정 분류는 어디까지인가 — 다섯 층 가운데 두 층</h3>
+  <p>지방자치단체 세출은 <b>분야 → 부문 → 정책사업 → 단위사업 → 세부사업</b>의 다섯 층으로 분류됩니다.
+  제6조제1항은 이 가운데 <b>위 두 층(분야·부문)만 전국 공통 목록(별표 9)</b>으로 정하고, 아래 세 층은 각 단체가 별표 10의 규칙에 따라
+  스스로 만들도록 합니다. 그래서 부문까지는 어느 단체든 같은 잣대로 비교되지만, 그 아래로는 같은 일을 하는 사업이 단체마다 다른 이름과
+  코드를 답니다. "부문(54종)보다 세밀한 축은 연구자가 만들어야 한다"는 <a href="../../data/classification/">분류 계획</a>의 출발점이 여기입니다.
+  단, 어느 부문에 넣을지도 단체가 코딩하므로 부문 비교에도 오차는 있습니다(「민생회복 소비쿠폰」이 네 분야에 흩어진 사례).</p>
+
+  <h4>별표 9 전문 — 세출예산 기능별 분류 (13개 분야 54개 부문)</h4>
+  <p class="desc">「지방자치단체 예산편성 운영기준」(행정안전부훈령 제404호, 2025.7.31.) 별표 9를 원문 그대로 옮긴 것.
+  데이터의 <code>fld_cd</code>·<code>ane_part_cd</code>가 이 코드를 씁니다(자릿수 혼재 <code>085</code>/<code>85</code>는 3자리로 맞춰 읽을 것).
+  원문의 ※ 주석: 행정운영경비는 기타(<code>900</code>) 분야로 처리. 별표 9 다음 쪽부터는 부문별로 "어떤 업무가 해당하는지"와 정책사업 유형화 예시가 이어집니다(원문 58쪽 이하).</p>
+  <div class="tbl-wrap static"><table class="plain">
+    <thead><tr><th style="width:30%">분야 (부문 수)</th><th>부문</th></tr></thead>
+    <tbody><tr><td><code>010</code> 일반공공행정 <span class="muted">(4)</span></td><td style="white-space:normal"><code>011</code> 입법및선거관리 · <code>013</code> 지방행정･재정지원 · <code>014</code> 재정･금융 · <code>016</code> 일반행정</td></tr><tr><td><code>020</code> 공공질서 및 안전 <span class="muted">(3)</span></td><td style="white-space:normal"><code>023</code> 경찰 · <code>025</code> 재난방재･민방위 · <code>026</code> 소방</td></tr><tr><td><code>050</code> 교육 <span class="muted">(3)</span></td><td style="white-space:normal"><code>051</code> 유아및초중등교육 · <code>052</code> 고등교육 · <code>053</code> 평생･직업교육</td></tr><tr><td><code>060</code> 문화 및 관광 <span class="muted">(5)</span></td><td style="white-space:normal"><code>061</code> 문화예술 · <code>062</code> 관광 · <code>063</code> 체육 · <code>064</code> 국가유산 · <code>065</code> 문화및관광일반</td></tr><tr><td><code>070</code> 환경 <span class="muted">(6)</span></td><td style="white-space:normal"><code>071</code> 상하수도･수질 · <code>072</code> 폐기물 · <code>073</code> 대기 · <code>074</code> 자연 · <code>075</code> 해양 · <code>076</code> 환경보호일반</td></tr><tr><td><code>080</code> 사회복지 <span class="muted">(10)</span></td><td style="white-space:normal"><code>081</code> 기초생활보장 · <code>082</code> 취약계층지원 · <code>086</code> 노동 · <code>087</code> 보훈 · <code>088</code> 주택 · <code>089</code> 사회복지 일반 · <code>08A</code> 보육 · <code>08B</code> 가족･여성 · <code>08C</code> 노인 · <code>08D</code> 청소년</td></tr><tr><td><code>090</code> 보건 <span class="muted">(2)</span></td><td style="white-space:normal"><code>091</code> 보건의료 · <code>093</code> 식품의약안전</td></tr><tr><td><code>100</code> 농림해양수산 <span class="muted">(3)</span></td><td style="white-space:normal"><code>101</code> 농업･농촌 · <code>102</code> 임업･산촌 · <code>103</code> 해양수산･어촌</td></tr><tr><td><code>110</code> 산업･중소기업 및 에너지 <span class="muted">(6)</span></td><td style="white-space:normal"><code>111</code> 산업금융지원 · <code>112</code> 산업기술지원 · <code>113</code> 무역및투자유치 · <code>114</code> 산업진흥･고도화 · <code>115</code> 에너지및자원개발 · <code>116</code> 산업･중소기업일반</td></tr><tr><td><code>120</code> 교통 및 물류 <span class="muted">(5)</span></td><td style="white-space:normal"><code>121</code> 도로 · <code>123</code> 도시철도 · <code>124</code> 해운･항만 · <code>125</code> 항공･공항 · <code>126</code> 대중교통･물류등기타</td></tr><tr><td><code>140</code> 국토 및 지역개발 <span class="muted">(3)</span></td><td style="white-space:normal"><code>141</code> 수자원 · <code>142</code> 지역및도시 · <code>143</code> 산업단지</td></tr><tr><td><code>150</code> 과학기술 <span class="muted">(3)</span></td><td style="white-space:normal"><code>151</code> 기술개발 · <code>152</code> 과학기술연구지원 · <code>153</code> 과학기술일반</td></tr><tr><td><code>160</code> 예비비 <span class="muted">(1)</span></td><td style="white-space:normal"><code>161</code> 예비비</td></tr>
+      <tr><td><code>900</code> 기타</td><td style="white-space:normal">행정운영경비·재무활동 (별표 9 주석. 데이터에서는 <code>901</code> 등 부문으로 나타남)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="desc">원문: <a href="https://www.law.go.kr/행정규칙/지방자치단체예산편성운영기준">국가법령정보센터 행정규칙 「지방자치단체 예산편성 운영기준」</a> (별표·서식 탭에 별표 9) ·
+  행정안전부 누리집 게시글(nttId 119443) 첨부 PDF 57쪽. 사본은 프로젝트 <code>docs/legal/</code>.</p>
+
   <h3>그래서 무엇으로 비교할 수 있나</h3>
   <div class="tbl-wrap static"><table id="cmpAxis" class="plain">
     <thead><tr><th style="width:34%">묻는 것</th><th style="width:14%">되나</th><th>어떻게</th></tr></thead>
